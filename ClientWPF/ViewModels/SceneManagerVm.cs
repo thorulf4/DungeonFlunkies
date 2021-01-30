@@ -18,7 +18,7 @@ namespace ClientWPF.ViewModels
             CurrentScene = CreateScene<StartScreenVm>();
         }
 
-        public Scene CreateScene<TScene>() where TScene : Scene
+        public TScene CreateScene<TScene>() where TScene : Scene
         {
             return provider.GetRequiredService<TScene>();
         }

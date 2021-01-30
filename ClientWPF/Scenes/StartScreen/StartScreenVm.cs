@@ -24,6 +24,7 @@ namespace ClientWPF.Scenes.StartScreen
 
         public string Name { get; set; }
         public string Password { get; set; }
+        public string Message { get; set; }
 
         public RelayCommand Login { get
             {
@@ -37,11 +38,18 @@ namespace ClientWPF.Scenes.StartScreen
 
                     if (result.Success && result.data is string token)
                     {
-                        Console.WriteLine($"Received session token: {token}");
                         player.name = Name;
                         player.sessionToken = token;
 
                         sceneManager.SetScene<RoomVm>();
+                    }
+                    else
+                    {
+                        var scene = sceneManager.CreateScene<StartScreenVm>();
+                        scene.Name = Name;
+                        scene.Password = Password;
+                        scene.Message = result.exception.Message;
+                        sceneManager.SetScene(scene);
                     }
                 });
             }
@@ -53,7 +61,27 @@ namespace ClientWPF.Scenes.StartScreen
             {
                 return new RelayCommand(o =>
                 {
+                    Response result = client.SendRequest(new LoginRequest
+                    {
+                        Name = this.Name,
+                        Secret = Password
+                    });
 
+                    if (result.Success && result.data is string token)
+                    {
+                        player.name = Name;
+                        player.sessionToken = token;
+
+                        sceneManager.SetScene<RoomVm>();
+                    }
+                    else
+                    {
+                        var scene = sceneManager.CreateScene<StartScreenVm>();
+                        scene.Name = Name;
+                        scene.Password = Password;
+                        scene.Message = result.exception.Message;
+                        sceneManager.SetScene(scene);
+                    }
                 });
             }
         }

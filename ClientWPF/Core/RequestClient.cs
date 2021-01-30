@@ -46,16 +46,25 @@ namespace ClientWPF
             }
         }
 
-        public Response SendRequest(object request)
+        public Response SendRequest<TRequest>(TRequest request, Player credentials) where TRequest : AuthenticatedRequest
         {
-            if(request is AuthenticatedRequest auth)
-            {
-                auth.Name = Player.name;
-                auth.SessionId = Player.sessionToken;
-            }
+            request.Name = credentials.name;
+            request.SessionId = credentials.sessionToken;
 
             Send(request);
+            return WaitForResponse();
 
+        }
+
+        public Response SendRequest(object request)
+        {
+            Send(request);
+            return WaitForResponse();
+
+        }
+
+        private Response WaitForResponse()
+        {
             using (BinaryReader reader = new BinaryReader(client.GetStream(), Encoding.ASCII, leaveOpen: true))
             {
                 string[] response = reader.ReadString().Split("\n");
@@ -67,7 +76,6 @@ namespace ClientWPF
                 else
                     return new Response(data, type);
             }
-
         }
     }
 }
