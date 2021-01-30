@@ -4,9 +4,9 @@ using System.Text;
 
 namespace ClientWPF
 {
-    public static class Player
+    public class Player
     {
-        public static string sessionToken;
-        internal static string name;
+        public string name = "";
+        public string sessionToken = "";
     }
 }

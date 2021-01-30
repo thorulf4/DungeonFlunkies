@@ -18,8 +18,9 @@ namespace ClientWPF.Utils.Wpf
 
         public SceneManagerVm SceneManager { get
             {
-                provider.GetService<RequestClient>();
-                return new SceneManagerVm();
+                var manager = provider.GetRequiredService<SceneManagerVm>();
+                manager.SetServiceProvider(provider);
+                return manager;
             } }
     }
 }

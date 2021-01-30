@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using ClientWPF.Scenes.StartScreen;
+using ClientWPF.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -27,6 +29,14 @@ namespace ClientWPF
         private void RegisterDependencies(ServiceCollection services)
         {
             services.AddSingleton(new RequestClient(IPAddress.Loopback, 5723));
+            services.AddScoped<SceneManagerVm>();
+            services.AddScoped<ChatBoxVm>();
+
+            //Add scenes
+            services.AddTransient<StartScreenVm>();
+
+            //Add storages
+            services.AddScoped<Player>();
         }
     }
 }
