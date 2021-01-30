@@ -11,7 +11,7 @@ namespace ClientWPF.ViewModels
 
         public void Notify(string changedProperty)
         {
-            PropertyChanged(this, new PropertyChangedEventArgs(changedProperty));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(changedProperty));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ClientWPF.Utils.Wpf;
 using ClientWPF.ViewModels;
+using Shared.Alerts;
 using Shared.Model.Interactables;
 using Shared.Requests;
 using Shared.Requests.Rooms;
@@ -27,6 +28,9 @@ namespace ClientWPF.Scenes.RoomScene
             this.sceneManager = sceneManager;
             this.client = client;
             this.player = player;
+
+            client.SubscribeTo<RoomUpdateAlert>(this, OnRoomUpdate);
+
             var result = client.SendRequest(new GetRoomRequest(), player);
             if (result.Success && result.data is RoomResponse room)
             {
@@ -40,16 +44,27 @@ namespace ClientWPF.Scenes.RoomScene
             }
         }
 
+        private void OnRoomUpdate(RoomUpdateAlert alert)
+        {
+            People = alert.PeopleInRoom.Aggregate((a, b) => $"{a}, {b}");
+            Interactions = alert.Interactions.ToList().AsReadOnly();
+            
+            Notify("People");
+            Notify("Interactions");
+        }
+
+        public override void Unload()
+        {
+            client.Unsubscribe(this);
+        }
+
         public RelayCommand Interact { get
             {
                 return new RelayCommand(o =>
                 {
                     InteractionDescriptor interaction = (InteractionDescriptor)o;
                     var result = client.SendRequest(new InteractionRequest(interaction.Id), player);
-                    if (result.Success)
-                    {
-                        //Set scene depending on response
-                    }
+                    sceneManager.LookupScene(result);
                 });
             }
         }

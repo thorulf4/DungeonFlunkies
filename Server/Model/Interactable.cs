@@ -13,7 +13,7 @@ namespace Server.Model
         public int RoomId { get; set; }
         public Room Room { get; set; }
 
-        public abstract Response Interact(Player player, GameDb context);
+        public abstract Response Interact(Player player, GameDb context, IAlerter alerter);
 
         public abstract InteractionDescriptor GetDescriptor(GameDb context);
     }

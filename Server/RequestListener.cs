@@ -3,11 +3,13 @@ using Newtonsoft.Json;
 using Server.Pipeline;
 using Server.RequestHandlers;
 using Shared;
+using Shared.Alerts;
 using Shared.Requests;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -15,13 +17,16 @@ using System.Threading;
 
 namespace Server
 {
-    class RequestListener
+    class RequestListener : IAlerter
     {
         private Dictionary<Type, Type> registeredRequests = new Dictionary<Type, Type>();
         private TcpListener tcpListener;
         private IServiceProvider serviceProvider;
         private Mediator mediator;
         private Type interactionHandler;
+
+        private Dictionary<Thread, string> users = new Dictionary<Thread, string>();
+        private List<AlertBroadcast> alerts = new List<AlertBroadcast>();
 
         public RequestListener(ushort port)
         {
@@ -32,6 +37,23 @@ namespace Server
         public ListenerBuilder Configure()
         {
             return new ListenerBuilder(this);
+        }
+
+        public void RegisterUser(string username)
+        {
+            lock (users)
+            {
+                users.Add(Thread.CurrentThread, username);
+            }
+        }
+
+        public void SendAlerts<T>(T alert, ICollection<string> receivers) where T : Alert
+        {
+            List<string> activeUsers = users.Values.Intersect(receivers).ToList();
+            lock (alerts)
+            {
+                alerts.Add(new AlertBroadcast(activeUsers, alert));
+            }
         }
 
         private void RegisterRequest<TR, TH>()
@@ -54,14 +76,12 @@ namespace Server
 
         private void HandleConnection(object obj)
         {
-            TcpClient client = obj as TcpClient;
-
+            TcpClient client = obj as TcpClient; 
             Stopwatch watch = Stopwatch.StartNew();
-            long timeout = 1000 * 60 * 10; // 10 minutes
 
             using (NetworkStream stream = client.GetStream())
             {
-                while (watch.ElapsedMilliseconds <= timeout)
+                while (client.Connected)
                 {
                     if (stream.DataAvailable)
                     {
@@ -69,12 +89,69 @@ namespace Server
 
                         watch.Restart();
                     }
+
+                    HandleAlerts(stream);
                 }
 
                 stream.Flush();
             }
 
             client.Close();
+
+            lock (users)
+            {
+                if(users.ContainsKey(Thread.CurrentThread))
+                    users.Remove(Thread.CurrentThread);
+            }
+        }
+
+        private void HandleAlerts(NetworkStream stream)
+        {
+            string? user = null;
+            lock (users)
+            {
+                if(users.ContainsKey(Thread.CurrentThread))
+                    user = users[Thread.CurrentThread];
+            }
+
+            if (user != null)
+            {
+                
+                bool sentAlerts = false;
+
+                for (int i = 0; i < alerts.Count; i++)
+                {
+                    AlertBroadcast alertBroadcast = alerts[i];
+                    if (alertBroadcast == null)
+                        continue;
+
+                    bool shouldSend = false;
+                    lock (alertBroadcast)
+                    {
+                        shouldSend = alertBroadcast.Receivers.Contains(user);
+                    }
+
+                    if (shouldSend)
+                    {
+                        SendResponse(Response.From(alertBroadcast.Content), stream);
+                        sentAlerts = true;
+                    }
+                }
+
+                //Cleanup
+                if (sentAlerts)
+                {
+                    lock (alerts)
+                    {
+                        for(int i = alerts.Count -1; i >= 0; i--)
+                        {
+                            alerts[i].Receivers.Remove(user);
+                            if (alerts[i].Receivers.Count == 0)
+                                alerts.RemoveAt(i);
+                        }
+                    }
+                }
+            }
         }
 
         private void HandleRequest(NetworkStream stream)
@@ -105,7 +182,7 @@ namespace Server
             Type type = Type.GetType(strType);
             object data = JsonConvert.DeserializeObject(json, type);
 
-            if(data is InteractionRequest interaction)
+            if(data is InteractionRequest)
             {
                 var handler = (IHandler)serviceProvider.GetRequiredService(interactionHandler);
 
@@ -193,5 +270,7 @@ namespace Server
         {
             this.serviceProvider = serviceProvider;
         }
+
+        
     }
 }

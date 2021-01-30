@@ -30,7 +30,7 @@ namespace ClientWPF.Scenes.StartScreen
             {
                 return new RelayCommand(o =>
                 {
-                    Response result = client.SendRequest(new CreateCharacterRequest
+                    Response result = client.SendRequest(new LoginRequest
                     {
                         Name = this.Name,
                         Secret = Password
@@ -61,7 +61,7 @@ namespace ClientWPF.Scenes.StartScreen
             {
                 return new RelayCommand(o =>
                 {
-                    Response result = client.SendRequest(new LoginRequest
+                    Response result = client.SendRequest(new CreateCharacterRequest
                     {
                         Name = this.Name,
                         Secret = Password
@@ -84,6 +84,11 @@ namespace ClientWPF.Scenes.StartScreen
                     }
                 });
             }
+        }
+
+        public override void Unload()
+        {
+
         }
     }
 }

@@ -5,8 +5,8 @@ using System.Text;
 
 namespace ClientWPF.Scenes
 {
-    public class Scene : ViewModel
+    public abstract class Scene : ViewModel
     {
-
+        public abstract void Unload();
     }
 }

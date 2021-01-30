@@ -11,7 +11,7 @@ namespace Server.Pipeline
         {
             if(request is AuthenticatedRequest auth)
             {
-                Console.WriteLine($"{auth.Name} during session {auth.SessionId} has sent a {request.GetType().Name}");
+                Console.WriteLine($"{auth.Name} during session {auth.SessionId.ToString().Replace("\n", "?")} has sent a {request.GetType().Name}");
             }
             else
             {

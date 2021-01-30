@@ -31,16 +31,16 @@
             <Grid Grid.Row="0" DataContext="{Binding SceneManager, Mode=OneWay, Source={StaticResource locator}}">
                 <ContentControl Content="{Binding}" DataContext="{Binding CurrentScene}"/>
             </Grid>
-            
-            <DockPanel Grid.Row="1" Background="LightGray">
+
+            <DockPanel Grid.Row="1" Background="LightGray" DataContext="{Binding ChatBox, Mode=OneWay, Source={StaticResource locator}}">
                 <DockPanel DockPanel.Dock="Bottom">
-                    <Button DockPanel.Dock="Right">
+                    <Button DockPanel.Dock="Right" Command="{Binding SendMessage}">
                         Send
                     </Button>
-                    <TextBox>Say something</TextBox>
+                    <TextBox Text="{Binding MessageInput, FallbackValue='Say something' }"></TextBox>
                 </DockPanel>
-                <TextBlock VerticalAlignment="Bottom">
-                    Thar: Hey this is a chat window
+                <TextBlock VerticalAlignment="Bottom" Text="{Binding ChatBox, FallbackValue='Thar: Hey this is a chat window'}">
+
                 </TextBlock>
             </DockPanel>
         </Grid>

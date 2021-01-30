@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Model;
 using Shared;
+using Shared.Alerts;
 using Shared.Model;
 using Shared.Model.Interactables;
 using Shared.Requests;
@@ -28,15 +29,23 @@ namespace Server.Interactables
             };
         }
 
-        public override Response Interact(Player player, GameDb context)
+        public override Response Interact(Player player, GameDb context, IAlerter alerter)
         {
+            context.Interactables.Where(i => i.Id == Id).Include("LeadsTo");
+            AlertLeaving(player, context, alerter);
+
             player.Location = LeadsTo;
 
             context.SaveChanges();
 
-            context.Interactables.Where(i => i.Id == Id).Include("LeadsTo");
-            InteractionDescriptor[] descriptors = context.Interactables.Where(i => i.RoomId == LeadsTo.Id).Select(i=> i.GetDescriptor(context)).ToArray();
+            InteractionDescriptor[] descriptors = context.Interactables.Where(i => i.RoomId == LeadsTo.Id).Select(i => i.GetDescriptor(context)).ToArray();
             string[] names = context.Players.Where(p => p.Location.Id == LeadsTo.Id).Select(p => p.Name).ToArray();
+
+            alerter.SendAlerts(new RoomUpdateAlert
+            {
+                Interactions = descriptors,
+                PeopleInRoom = names
+            }, names.Except(new string[] { player.Name }).ToArray());
 
             return Response.From(new RoomResponse
             {
@@ -44,6 +53,19 @@ namespace Server.Interactables
                 Interactions = descriptors,
                 PeopleInRoom = names
             });
+        }
+
+        private void AlertLeaving(Player player, GameDb context, IAlerter alerter)
+        {
+            InteractionDescriptor[] descriptors = context.Interactables.Where(i => i.RoomId == player.Location.Id).Select(i => i.GetDescriptor(context)).ToArray();
+            List<string> names = context.Players.Where(p => p.Location.Id == player.Location.Id).Select(p => p.Name).ToList();
+            names.Remove(player.Name);
+
+            alerter.SendAlerts(new RoomUpdateAlert
+            {
+                Interactions = descriptors,
+                PeopleInRoom = names.ToArray()
+            }, names);
         }
     }
 }

@@ -10,17 +10,39 @@ namespace ClientWPF.Utils.Wpf
     public class ViewModelLocator
     {
         private IServiceProvider provider;
+        bool isDesigner = false;
 
         public ViewModelLocator()
         {
-            provider = ((App)Application.Current).provider;
+            try
+            {
+                provider = ((App)Application.Current).provider;
+            }catch(InvalidCastException e)
+            {
+                isDesigner = true;
+            }
         }
 
         public SceneManagerVm SceneManager { get
             {
+                if (isDesigner)
+                    return new SceneManagerVm();
+
                 var manager = provider.GetRequiredService<SceneManagerVm>();
                 manager.SetServiceProvider(provider);
                 return manager;
             } }
+
+        public ChatBoxVm ChatBox
+        {
+            get
+            {
+                if (isDesigner)
+                    return new ChatBoxVm();
+
+                var chatBox = provider.GetRequiredService<ChatBoxVm>();
+                return chatBox;
+            }
+        }
     }
 }

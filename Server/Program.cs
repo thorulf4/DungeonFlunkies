@@ -10,6 +10,7 @@ using Shared.Requests.Authentication;
 using Shared.Requests.Rooms;
 using System;
 using System.Linq;
+using System.Text;
 
 namespace Server
 {
@@ -60,6 +61,7 @@ namespace Server
             {
                 services.AddDbContext<GameDb>();
                 services.AddSingleton<Authenticator>();
+                services.AddSingleton<IAlerter>(listener);
             });
             configure.AddMiddleware(new Debugger());
             configure.AddInteractionHandler<InteractionHandler>();
@@ -73,6 +75,7 @@ namespace Server
             configure.AddHandler<CreateCharacterRequest, CreateCharacterHandler>();
             configure.AddHandler<LoginRequest, LoginHandler>();
             configure.AddHandler<GetRoomRequest, GetRoomHandler>();
+            configure.AddHandler<SayRequest, SayHandler>();
         }
     }
 }

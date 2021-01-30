@@ -14,11 +14,13 @@ namespace Server.RequestHandlers
     {
         private GameDb context;
         private Authenticator authenticator;
+        private IAlerter alerter;
 
-        public LoginHandler(GameDb context, Authenticator authenticator)
+        public LoginHandler(GameDb context, Authenticator authenticator, IAlerter alerter)
         {
             this.context = context;
             this.authenticator = authenticator;
+            this.alerter = alerter;
         }
 
         public override Response Handle(LoginRequest request)
@@ -29,6 +31,7 @@ namespace Server.RequestHandlers
                 return Response.Fail("Invalid name or password");
 
             string sessionToken = authenticator.CreateSession(request.Name, player.Id);
+            alerter.RegisterUser(request.Name);
             return Response.From(sessionToken);
         }
     }

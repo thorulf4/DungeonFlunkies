@@ -33,9 +33,14 @@ namespace Shared
             return new Response(null, null);
         }
 
-        public static Response From<T>(T data)
+        //public static Response From<T>(T data)
+        //{
+        //    return new Response(data, typeof(T));
+        //}
+
+        public static Response From(object data)
         {
-            return new Response(data, typeof(T));
+            return new Response(data, data.GetType());
         }
 
         public static Response Fail(string message)
