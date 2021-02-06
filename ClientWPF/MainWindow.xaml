@@ -50,15 +50,13 @@
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <DockPanel>
+            <DockPanel DataContext="{Binding Sidebar, Mode=OneWay, Source={StaticResource locator}}">
                 <StackPanel DockPanel.Dock="Bottom">
-                    <Button Margin="1">Maybe more buttons?</Button>
-                    <Button Margin="1">Inventory</Button>
-                    <Button Margin="1">Log out</Button>
+                    <Button Command="{Binding Inventory}" Margin="1">Inventory</Button>
+                    <Button Command="{Binding Logout}"  Margin="1">Log out</Button>
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock HorizontalAlignment="Center" FontSize="18">
-                    Name
+                    <TextBlock HorizontalAlignment="Center" FontSize="18" Text="{Binding PlayerName}" AllowDrop="True">
                     </TextBlock>
                     <TextBlock HorizontalAlignment="Center">
                     useful stats

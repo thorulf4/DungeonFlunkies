@@ -1,12 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Server.Application;
 using Server.Interactables;
 using Server.Model;
-using Server.Pipeline;
+using Server.Model.Items;
+using Server.Pipelining;
 using Server.RequestHandlers;
+using Server.RequestHandlers.Character;
 using Server.RequestHandlers.Rooms;
+using Shared;
 using Shared.Requests;
 using Shared.Requests.Authentication;
+using Shared.Requests.Character;
 using Shared.Requests.Rooms;
 using System;
 using System.Linq;
@@ -17,6 +22,7 @@ namespace Server
     class Program
     {
         public static int startingRoomId;
+        public static int testSwordId;
 
         static void Main(string[] args)
         {
@@ -35,9 +41,12 @@ namespace Server
                 {
                     Room room1 = new Room();
                     Room room2 = new Room();
+                    Equipment money = new Equipment { BaseValue = 1, Name = "Sword", Type = EquipmentType.Holdable };
 
                     context.Add(room1);
                     context.Add(room2);
+                    context.Add(money);
+
 
                     context.SaveChanges();
 
@@ -48,10 +57,12 @@ namespace Server
                     context.SaveChanges();
 
                     startingRoomId = room1.Id;
+                    testSwordId = money.Id;
                 }
                 else
                 {
                     startingRoomId = context.Rooms.FirstOrDefault().Id;
+                    testSwordId = 1;
                 }
             }
 
@@ -62,6 +73,7 @@ namespace Server
                 services.AddDbContext<GameDb>();
                 services.AddSingleton<Authenticator>();
                 services.AddSingleton<IAlerter>(listener);
+                services.AddSingleton<Mediator>();
             });
             configure.AddMiddleware(new Debugger());
             configure.AddInteractionHandler<InteractionHandler>();
@@ -76,6 +88,11 @@ namespace Server
             configure.AddHandler<LoginRequest, LoginHandler>();
             configure.AddHandler<GetRoomRequest, GetRoomHandler>();
             configure.AddHandler<SayRequest, SayHandler>();
+            configure.AddHandler<GetInventoryRequest, GetInventoryHandler>();
+            configure.AddHandler<DropItemsRequest, DropItemsHandler>();
+            configure.AddHandler<PickupItemRequest, PickupItemHandler>();
+            configure.AddHandler<EquipItemRequest, EquipItemHandler>();
+            configure.AddHandler<UnequipItemRequest, UnequipItemHandler>();
         }
     }
 }

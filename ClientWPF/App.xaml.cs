@@ -1,7 +1,9 @@
-﻿using ClientWPF.Scenes.RoomScene;
+﻿using ClientWPF.Scenes.Character;
+using ClientWPF.Scenes.RoomScene;
 using ClientWPF.Scenes.StartScreen;
 using ClientWPF.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -29,16 +31,26 @@ namespace ClientWPF
 
         private void RegisterDependencies(ServiceCollection services)
         {
-            services.AddSingleton(new RequestClient(IPAddress.Loopback, 5723, Dispatcher));
+            var requestClient = new RequestClient(IPAddress.Loopback, 5723, Dispatcher);
+            requestClient.OnFailReceived += OnFailReceived;
+
+            services.AddSingleton(requestClient);
             services.AddScoped<SceneManagerVm>();
             services.AddScoped<ChatBoxVm>();
+            services.AddScoped<SidebarVm>();
 
             //Add scenes
             services.AddTransient<StartScreenVm>();
             services.AddTransient<RoomVm>();
+            services.AddTransient<InventoryVm>();
 
-            //Add storages
+            //Add storage services
             services.AddScoped<Player>();
+        }
+
+        private void OnFailReceived(object sender, RequestFailure e)
+        {
+            MessageBox.Show("Fail: " + e.Message);
         }
     }
 }

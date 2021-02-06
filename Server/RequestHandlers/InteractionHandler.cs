@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Server.Application;
+using Server.Application.Character;
 using Server.Model;
 using Shared;
 using Shared.Requests;
@@ -9,25 +11,27 @@ using System.Text;
 
 namespace Server.RequestHandlers
 {
-    public class InteractionHandler : Handler<InteractionRequest>
+    public class InteractionHandler : RequestHandler<InteractionRequest>
     {
-        private Authenticator authenticator;
         private GameDb context;
+        private Mediator mediator;
+        private Authenticator authenticator;
         private IAlerter alerter;
 
-        public InteractionHandler(Authenticator authenticator, GameDb context, IAlerter alerter)
+        public InteractionHandler(GameDb context, Mediator mediator, Authenticator authenticator, IAlerter alerter)
         {
-            this.authenticator = authenticator;
             this.context = context;
+            this.mediator = mediator;
+            this.authenticator = authenticator;
             this.alerter = alerter;
         }
 
         public override Response Handle(InteractionRequest request)
         {
-            int? playerid = authenticator.VerifySession(request.Name, request.SessionId);
+            int playerid = authenticator.VerifySession(request.Name, request.SessionId);
 
-            Interactable interactable = context.Interactables.Find(request.InteractableId);
-            Player player = context.Players.Where(p => p.Id == playerid).Include(p => p.Location).Single();
+            Interactable interactable = mediator.GetHandler<GetInteractable>().Get(request.InteractableId);
+            Player player = mediator.GetHandler<GetPlayer>().GetWithLocation(playerid);
 
             Response result = interactable.Interact(player, context, alerter);
             context.SaveChanges();

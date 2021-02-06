@@ -41,7 +41,7 @@ namespace Server.Interactables
             InteractionDescriptor[] descriptors = context.Interactables.Where(i => i.RoomId == LeadsTo.Id).Select(i => i.GetDescriptor(context)).ToArray();
             string[] names = context.Players.Where(p => p.Location.Id == LeadsTo.Id).Select(p => p.Name).ToArray();
 
-            alerter.SendAlerts(new RoomUpdateAlert
+            alerter.SendAlerts(new RoomAlert
             {
                 Interactions = descriptors,
                 PeopleInRoom = names
@@ -61,7 +61,7 @@ namespace Server.Interactables
             List<string> names = context.Players.Where(p => p.Location.Id == player.Location.Id).Select(p => p.Name).ToList();
             names.Remove(player.Name);
 
-            alerter.SendAlerts(new RoomUpdateAlert
+            alerter.SendAlerts(new RoomAlert
             {
                 Interactions = descriptors,
                 PeopleInRoom = names.ToArray()

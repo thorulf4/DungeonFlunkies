@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Server.Pipeline;
+using Server.Pipelining;
 using Server.RequestHandlers;
 using Shared;
 using Shared.Alerts;
@@ -19,18 +19,18 @@ namespace Server
 {
     class RequestListener : IAlerter
     {
-        private Dictionary<Type, Type> registeredRequests = new Dictionary<Type, Type>();
-        private TcpListener tcpListener;
+        private readonly Dictionary<Type, Type> registeredRequests = new Dictionary<Type, Type>();
+        private readonly TcpListener tcpListener;
         private IServiceProvider serviceProvider;
-        private Mediator mediator;
+        private readonly Pipeline pipeline;
         private Type interactionHandler;
 
-        private Dictionary<Thread, string> users = new Dictionary<Thread, string>();
-        private List<AlertBroadcast> alerts = new List<AlertBroadcast>();
+        private readonly Dictionary<Thread, string> users = new Dictionary<Thread, string>();
+        private readonly List<AlertBroadcast> alerts = new List<AlertBroadcast>();
 
         public RequestListener(ushort port)
         {
-            mediator = new Mediator();
+            pipeline = new Pipeline();
             tcpListener = new TcpListener(IPAddress.Any, port);
         }
 
@@ -43,6 +43,7 @@ namespace Server
         {
             lock (users)
             {
+                //TODO crashes if same thread logouts and logins in again
                 users.Add(Thread.CurrentThread, username);
             }
         }
@@ -107,7 +108,7 @@ namespace Server
 
         private void HandleAlerts(NetworkStream stream)
         {
-            string? user = null;
+            string user = null;
             lock (users)
             {
                 if(users.ContainsKey(Thread.CurrentThread))
@@ -156,25 +157,21 @@ namespace Server
 
         private void HandleRequest(NetworkStream stream)
         {
-            using (BinaryReader reader = new BinaryReader(stream, Encoding.ASCII, leaveOpen: true))
-            {
-                string[] request = reader.ReadString().Split("\n");
-                string type = request[0];
-                string json = request[1];
+            using BinaryReader reader = new BinaryReader(stream, Encoding.ASCII, leaveOpen: true);
+            string[] request = reader.ReadString().Split("\n");
+            string type = request[0];
+            string json = request[1];
 
-                Response response = CallRequestHandler(type, json);
+            Response response = CallRequestHandler(type, json);
 
-                if (response.HasData)
-                    SendResponse(response, stream);
-            }
+            if (response.HasData)
+                SendResponse(response, stream);
         }
 
         private void SendResponse(Response response, Stream stream)
         {
-            using (BinaryWriter writer = new BinaryWriter(stream, Encoding.ASCII, leaveOpen: true))
-            {
-                writer.Write(response.DataString);
-            }
+            using BinaryWriter writer = new BinaryWriter(stream, Encoding.ASCII, leaveOpen: true);
+            writer.Write(response.DataString);
         }
 
         private Response CallRequestHandler(string strType, string json)
@@ -186,14 +183,14 @@ namespace Server
             {
                 var handler = (IHandler)serviceProvider.GetRequiredService(interactionHandler);
 
-                return mediator.SendRequest(data, handler);
+                return pipeline.SendRequest(data, handler);
             }
             else
             {
                 var handlerType = registeredRequests[type];
                 var handler = (IHandler)serviceProvider.GetRequiredService(handlerType);
 
-                return mediator.SendRequest(data, handler);
+                return pipeline.SendRequest(data, handler);
             }
 
             
@@ -201,9 +198,9 @@ namespace Server
 
         public class ListenerBuilder
         {
-            private RequestListener subject;
+            private readonly RequestListener subject;
+            private readonly IServiceCollection services;
             private bool isBuilt;
-            private IServiceCollection services;
 
             public ListenerBuilder(RequestListener subject)
             {
@@ -226,7 +223,7 @@ namespace Server
                     throw new Exception("Listener has already started and therefor cannot be configured further");
             }
 
-            public ListenerBuilder AddHandler<TR, TH>() where TH : Handler<TR>
+            public ListenerBuilder AddHandler<TR, TH>() where TH : RequestHandler<TR>
             {
                 IsBuiltCheck();
 
@@ -251,7 +248,7 @@ namespace Server
             {
                 IsBuiltCheck();
 
-                subject.mediator.AddMiddleware(middleware);
+                subject.pipeline.AddMiddleware(middleware);
                 return this;
             }
 

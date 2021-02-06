@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using JsonSubTypes;
+using Newtonsoft.Json;
 using Shared;
 using Shared.Alerts;
 using Shared.Requests;
@@ -16,16 +17,17 @@ namespace ClientWPF
     public class RequestClient
     {
         private TcpClient client;
-        private IPAddress ip;
-        private ushort port;
-        private Dispatcher dispatcher;
+        private readonly IPAddress ip;
+        private readonly ushort port;
+        private readonly Dispatcher dispatcher;
 
         public bool IsConnected { get { return client != null && client.Connected; } }
 
-        private Thread receivingThread;
-        private Queue<Response> responses = new Queue<Response>();
-        private Dictionary<Type, Dictionary<object, List<Action<object>>>> callbacks = new Dictionary<Type, Dictionary<object, List<Action<object>>>>();
+        private readonly Thread receivingThread;
+        private readonly Queue<Response> responses = new Queue<Response>();
+        private readonly Dictionary<Type, Dictionary<object, List<Action<object>>>> callbacks = new Dictionary<Type, Dictionary<object, List<Action<object>>>>();
 
+        public event EventHandler<RequestFailure> OnFailReceived;
 
         public RequestClient(IPAddress ip, ushort port, Dispatcher dispatcher)
         {
@@ -33,8 +35,10 @@ namespace ClientWPF
             this.port = port;
             this.dispatcher = dispatcher;
 
-            receivingThread = new Thread(ReceivePackets);
-            receivingThread.IsBackground = true;
+            receivingThread = new Thread(ReceivePackets)
+            {
+                IsBackground = true
+            };
             receivingThread.Start();
         }
 
@@ -66,30 +70,31 @@ namespace ClientWPF
             {
                 if (IsConnected && client.Available > 0)
                 {
-                    using (BinaryReader reader = new BinaryReader(client.GetStream(), Encoding.ASCII, leaveOpen: true))
-                    {
-                        string[] response = reader.ReadString().Split("\n");
-                        Type type = Type.GetType(response[0]);
-                        object data = JsonConvert.DeserializeObject(response[1], type);
+                    using BinaryReader reader = new BinaryReader(client.GetStream(), Encoding.ASCII, leaveOpen: true);
+                    string[] response = reader.ReadString().Split("\n");
+                    Type type = Type.GetType(response[0]);
+                    object data = JsonConvert.DeserializeObject(response[1], type, SerializationSettings.current);
 
-                        if (type.IsSubclassOf(typeof(Alert)))
+                    if (type.IsSubclassOf(typeof(Alert)) && callbacks.ContainsKey(type))
+                    {
+                        foreach (var x in callbacks[type].Values)
                         {
-                            foreach(var x in callbacks[type].Values)
-                            {
-                                foreach (var callback in x)
-                                    dispatcher.Invoke(() => callback(data));
-                            }
+                            foreach (var callback in x)
+                                dispatcher.Invoke(() => callback(data));
                         }
+                    }
+                    else
+                    {
+                        if (type == typeof(RequestFailure))
+                            dispatcher.Invoke(() => OnFailReceived?.Invoke(this, (RequestFailure)data));
                         else
                         {
                             lock (responses)
                             {
-                                if (type == typeof(RequestFailure))
-                                    responses.Enqueue(new Response((RequestFailure)data));
-                                else
-                                    responses.Enqueue(new Response(data, type));
+                                responses.Enqueue(new Response(data, type));
                             }
                         }
+
                     }
                 }
                 else
@@ -117,16 +122,14 @@ namespace ClientWPF
         {
             EnforceConnection();
 
-            using (BinaryWriter writer = new BinaryWriter(client.GetStream(), Encoding.ASCII, leaveOpen: true))
-            {
-                writer.Write($"{request.GetType().AssemblyQualifiedName}\n{JsonConvert.SerializeObject(request)}");
-            }
+            using BinaryWriter writer = new BinaryWriter(client.GetStream(), Encoding.ASCII, leaveOpen: true);
+            writer.Write($"{request.GetType().AssemblyQualifiedName}\n{JsonConvert.SerializeObject(request)}");
         }
 
         public Response SendRequest<TRequest>(TRequest request, Player credentials) where TRequest : AuthenticatedRequest
         {
-            request.Name = credentials.name;
-            request.SessionId = credentials.sessionToken;
+            request.Name = credentials.Name;
+            request.SessionId = credentials.SessionToken;
 
             Send(request);
             return WaitForResponse();
@@ -140,8 +143,8 @@ namespace ClientWPF
 
         public void SendAction<TRequest>(TRequest request, Player credentials) where TRequest : AuthenticatedRequest
         {
-            request.Name = credentials.name;
-            request.SessionId = credentials.sessionToken;
+            request.Name = credentials.Name;
+            request.SessionId = credentials.SessionToken;
 
             Send(request);
         }

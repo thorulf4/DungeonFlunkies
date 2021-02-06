@@ -8,7 +8,7 @@ namespace ClientWPF.Utils.Wpf
     public class RelayCommand : ICommand
     {
         public event EventHandler CanExecuteChanged;
-        private Action<object> command;
+        private readonly Action<object> command;
 
         public RelayCommand(Action<object> command)
         {
