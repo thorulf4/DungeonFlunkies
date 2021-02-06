@@ -38,8 +38,8 @@ namespace ClientWPF.Scenes.StartScreen
 
                     if (result.Success && result.data is string token)
                     {
-                        player.name = Name;
-                        player.sessionToken = token;
+                        player.Name = Name;
+                        player.SessionToken = token;
 
                         sceneManager.SetScene<RoomVm>();
                     }
@@ -69,8 +69,8 @@ namespace ClientWPF.Scenes.StartScreen
 
                     if (result.Success && result.data is string token)
                     {
-                        player.name = Name;
-                        player.sessionToken = token;
+                        player.Name = Name;
+                        player.SessionToken = token;
 
                         sceneManager.SetScene<RoomVm>();
                     }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Shared.Alerts
 {
-    public class RoomUpdateAlert : Alert
+    public class RoomAlert : Alert
     {
         public InteractionDescriptor[] Interactions { get; set; }
         public string[] PeopleInRoom { get; set; }

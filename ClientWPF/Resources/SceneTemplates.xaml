@@ -2,12 +2,16 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:scenes="clr-namespace:ClientWPF.Scenes.StartScreen"
                     xmlns:room="clr-namespace:ClientWPF.Scenes.RoomScene"
+                    xmlns:char="clr-namespace:ClientWPF.Scenes.Character"
                     x:Name="SceneTemplatesDict">
-    <DataTemplate DataType="{x:Type scenes:StartScreenVm}" x:Key="T1">
+    <DataTemplate DataType="{x:Type scenes:StartScreenVm}">
         <scenes:StartControl/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type room:RoomVm}">
         <room:RoomControl/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type char:InventoryVm}">
+        <char:InventoryControl/>
     </DataTemplate>
 
 

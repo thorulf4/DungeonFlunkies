@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Server.RequestHandlers
 {
-    public abstract class Handler<T> : IHandler
+    public abstract class RequestHandler<T> : IHandler
     {
         public abstract Response Handle(T request);
 

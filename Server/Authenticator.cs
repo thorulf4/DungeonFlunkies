@@ -29,7 +29,7 @@ namespace Server
             return token;
         }
 
-        public int? VerifySession(string name, string token)
+        public int VerifySession(string name, string token)
         {
             UserConnection user = sessions[name];
 
@@ -37,7 +37,8 @@ namespace Server
             {
                 return user.Id;
             }
-            return null;
+
+            throw new Exception("Session not valid");
         }
 
         private string CreateSessionHash(string name, DateTime expiryTime)

@@ -1,4 +1,6 @@
-﻿using Server.Model;
+﻿using Server.Application;
+using Server.Application.Character;
+using Server.Model;
 using Shared;
 using Shared.Model;
 using Shared.Requests;
@@ -10,15 +12,15 @@ using System.Text;
 
 namespace Server.RequestHandlers
 {
-    class CreateCharacterHandler : Handler<CreateCharacterRequest>
+    class CreateCharacterHandler : RequestHandler<CreateCharacterRequest>
     {
-        private GameDb context;
-        private Authenticator authenticator;
-        private IAlerter alerter;
+        private readonly Mediator mediator;
+        private readonly Authenticator authenticator;
+        private readonly IAlerter alerter;
 
-        public CreateCharacterHandler(GameDb context, Authenticator authenticator, IAlerter alerter)
+        public CreateCharacterHandler(Mediator mediator, Authenticator authenticator, IAlerter alerter)
         {
-            this.context = context;
+            this.mediator = mediator;
             this.authenticator = authenticator;
             this.alerter = alerter;
         }
@@ -28,24 +30,16 @@ namespace Server.RequestHandlers
             if (request.Name == "" || request.Secret == "")
                 return Response.Fail("Either Name or Password was not given");
 
-            if (context.Players.Any(p => p.Name == request.Name))
+            if (mediator.GetHandler<GetPlayer>().PlayerExists(request.Name))
                 return Response.Fail("Name is already taken");
 
-            Player player = CreateDefaultCharacter(request, context);
-            context.Players.Add(player);
-            context.SaveChanges();
+            Player player = mediator.GetHandler<CreateNewCharacter>().CreatePlayer(request.Name, request.Secret);
 
             string sessionToken = authenticator.CreateSession(request.Name, player.Id);
             alerter.RegisterUser(request.Name);
             return Response.From(sessionToken);
         }
 
-        private static Player CreateDefaultCharacter(CreateCharacterRequest request, GameDb context)
-        {
-            var player = new Player(request.Name, request.Secret);
-            player.Location = context.Rooms.Find(Program.startingRoomId);
 
-            return player;
-        }
     }
 }

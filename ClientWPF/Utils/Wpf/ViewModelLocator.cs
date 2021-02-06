@@ -9,15 +9,15 @@ namespace ClientWPF.Utils.Wpf
 {
     public class ViewModelLocator
     {
-        private IServiceProvider provider;
-        bool isDesigner = false;
+        private readonly IServiceProvider provider;
+        private readonly bool isDesigner = false;
 
         public ViewModelLocator()
         {
             try
             {
                 provider = ((App)Application.Current).provider;
-            }catch(InvalidCastException e)
+            }catch(InvalidCastException)
             {
                 isDesigner = true;
             }
@@ -42,6 +42,16 @@ namespace ClientWPF.Utils.Wpf
 
                 var chatBox = provider.GetRequiredService<ChatBoxVm>();
                 return chatBox;
+            }
+        }
+
+        public SidebarVm Sidebar
+        {
+            get
+            {
+                if (isDesigner)
+                    return new SidebarVm();
+                return provider.GetRequiredService<SidebarVm>();
             }
         }
     }

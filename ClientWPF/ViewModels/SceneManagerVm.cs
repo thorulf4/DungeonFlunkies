@@ -1,8 +1,10 @@
 ﻿using ClientWPF.Scenes;
+using ClientWPF.Scenes.Character;
 using ClientWPF.Scenes.RoomScene;
 using ClientWPF.Scenes.StartScreen;
 using Microsoft.Extensions.DependencyInjection;
 using Shared;
+using Shared.Responses;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +15,8 @@ namespace ClientWPF.ViewModels
     {
         public Scene CurrentScene { get; set; }
         private IServiceProvider provider;
+
+        private Stack<Scene> scenes = new Stack<Scene>();
 
         public void SetServiceProvider(IServiceProvider provider)
         {
@@ -25,17 +29,33 @@ namespace ClientWPF.ViewModels
             return provider.GetRequiredService<TScene>();
         }
 
-        public void SetScene(Scene scene)
+        public void SetScene(Scene scene, bool forceful = true)
         {
+            if (forceful)
+                scenes = new Stack<Scene>();
+            else
+                scenes.Pop();
+
             CurrentScene.Unload();
             CurrentScene = scene;
+
+            scenes.Push(scene);
+
             Notify("CurrentScene");
         }
 
-        public void SetScene<TScene>() where TScene : Scene
+        public void SetScene<TScene>(bool forceful = true) where TScene : Scene
         {
+            if (forceful)
+                scenes = new Stack<Scene>();
+            else
+                scenes.Pop();
+
             CurrentScene.Unload();
             CurrentScene = CreateScene<TScene>();
+
+            scenes.Push(CurrentScene);
+
             Notify("CurrentScene");
         }
 
@@ -43,14 +63,49 @@ namespace ClientWPF.ViewModels
         {
             if (response.Success)
             {
-                //Always use default case for now
-                SetScene<RoomVm>();
+                if(response.data is LootResponse)
+                {
+                    PushScene<InventoryVm>();
+                }
+                else
+                {
+                    //default case will just go back to room
+                    SetScene<RoomVm>(forceful: true);
+                }
             }
             else
             {
                 //Error page later for some sort of error handling
                 throw new Exception("Oh god this shouldnt happen D:");
             }
+        }
+
+        public void PopScene()
+        {
+            scenes.Pop();
+            CurrentScene.Unload();
+            CurrentScene = scenes.Peek();
+            Notify("CurrentScene");
+        }
+
+        public void PushScene<T>(T scene) where T : Scene
+        {
+            scenes.Push(scene);
+            CurrentScene = scene;
+            Notify("CurrentScene");
+        }
+
+        public void PushScene<T>() where T : Scene
+        {
+            var scene = provider.GetRequiredService<T>();
+            scenes.Push(scene);
+            CurrentScene = scene;
+            Notify("CurrentScene");
+        }
+
+        public bool StackContains<T>(T scene) where T : Scene
+        {
+            return scenes.Contains(scene);
         }
     }
 }

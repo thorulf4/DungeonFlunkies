@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Server.Application;
+using Server.Application.Character;
 using Server.Interactables;
 using Server.Model;
 using Shared;
@@ -11,28 +13,27 @@ using System.Text;
 
 namespace Server.RequestHandlers.Rooms
 {
-    public class GetRoomHandler : Handler<GetRoomRequest>
+    public class GetRoomHandler : RequestHandler<GetRoomRequest>
     {
+        private Mediator mediator;
         private GameDb context;
         private Authenticator authenticator;
 
-        public GetRoomHandler(GameDb context, Authenticator authenticator)
+        public GetRoomHandler(Mediator mediator, GameDb context, Authenticator authenticator)
         {
+            this.mediator = mediator;
             this.context = context;
             this.authenticator = authenticator;
         }
 
         public override Response Handle(GetRoomRequest request)
         {
-            int? playerId = authenticator.VerifySession(request.Name, request.SessionId);
+            int playerId = authenticator.VerifySession(request.Name, request.SessionId);
 
-            int roomId = (from p in context.Players
-                          where p.Id == playerId
-                          select p.Location.Id).Single();
+            int roomId = mediator.GetHandler<GetPlayer>().Get(playerId).LocationId;
 
-
-            string[] peopleInRoom = context.Players.Where(p => p.Location.Id == roomId).Select(p => p.Name).ToArray();
-            var interactables = context.Interactables.Where(i => i.RoomId == roomId).ToArray();
+            string[] peopleInRoom = mediator.GetHandler<GetPlayer>().GetInRoom(roomId).Select(p => p.Name).ToArray();
+            var interactables = mediator.GetHandler<GetInteractable>().GetInRoom(roomId).ToArray();
 
             return Response.From(new RoomResponse
             {

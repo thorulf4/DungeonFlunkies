@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.Model.Items;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,5 +18,10 @@ namespace Server.Model
         public string Secret { get; set; }
 
         public Room Location { get; set; }
+        public int LocationId { get; set; }
+
+        public List<OwnedBy> Inventory { get; set; }
+
+        public List<Equipped> Equipment { get; set; }
     }
 }

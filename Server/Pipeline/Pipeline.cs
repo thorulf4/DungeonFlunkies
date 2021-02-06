@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Server.Pipeline
+namespace Server.Pipelining
 {
-    public class Mediator
+    public class Pipeline
     {
         private List<IMiddleware> middlewares = new List<IMiddleware>();
 

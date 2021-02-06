@@ -29,7 +29,7 @@ namespace ClientWPF.Scenes.RoomScene
             this.client = client;
             this.player = player;
 
-            client.SubscribeTo<RoomUpdateAlert>(this, OnRoomUpdate);
+            client.SubscribeTo<RoomAlert>(this, OnRoomUpdate);
 
             var result = client.SendRequest(new GetRoomRequest(), player);
             if (result.Success && result.data is RoomResponse room)
@@ -44,7 +44,7 @@ namespace ClientWPF.Scenes.RoomScene
             }
         }
 
-        private void OnRoomUpdate(RoomUpdateAlert alert)
+        private void OnRoomUpdate(RoomAlert alert)
         {
             People = alert.PeopleInRoom.Aggregate((a, b) => $"{a}, {b}");
             Interactions = alert.Interactions.ToList().AsReadOnly();
@@ -70,3 +70,4 @@ namespace ClientWPF.Scenes.RoomScene
         }
     }
 }
+ 

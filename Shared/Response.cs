@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using JsonSubTypes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Shared
         public readonly Type type;
 
         public bool HasData => data != null;
-        public string DataString => $"{type.AssemblyQualifiedName}\n{JsonConvert.SerializeObject(data)}";
+        public string DataString => $"{type.AssemblyQualifiedName}\n{JsonConvert.SerializeObject(data, SerializationSettings.current)}";
         public bool Success => exception == null;
 
         public Response(object data, Type type)
