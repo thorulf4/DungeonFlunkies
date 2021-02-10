@@ -1,5 +1,6 @@
 ﻿using ClientWPF.Scenes;
 using ClientWPF.Scenes.Character;
+using ClientWPF.Scenes.Combat;
 using ClientWPF.Scenes.RoomScene;
 using ClientWPF.Scenes.StartScreen;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,11 +48,16 @@ namespace ClientWPF.ViewModels
         public void SetScene<TScene>(bool forceful = true) where TScene : Scene
         {
             if (forceful)
-                scenes = new Stack<Scene>();
+            {
+                foreach (Scene scene in scenes)
+                    scene.Unload();
+            }
             else
+            {
                 scenes.Pop();
+                CurrentScene.Unload();
+            }
 
-            CurrentScene.Unload();
             CurrentScene = CreateScene<TScene>();
 
             scenes.Push(CurrentScene);
@@ -66,6 +72,9 @@ namespace ClientWPF.ViewModels
                 if(response.data is LootResponse)
                 {
                     PushScene<InventoryVm>();
+                }else if(response.data is CombatEncounterResponse)
+                {
+                    PushScene<ChooseVm>();
                 }
                 else
                 {

@@ -1,5 +1,6 @@
 ﻿using JsonSubTypes;
 using Newtonsoft.Json;
+using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Text;

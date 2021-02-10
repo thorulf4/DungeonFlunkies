@@ -2,7 +2,6 @@
 using Server.Application.Character;
 using Server.Model;
 using Shared;
-using Shared.Model;
 using Shared.Requests;
 using Shared.Requests.Authentication;
 using System;

@@ -1,7 +1,7 @@
 ﻿using JsonSubTypes;
 using System.Text.Json.Serialization;
 
-namespace Shared
+namespace Shared.Descriptors
 {
     //[JsonConverter(typeof(JsonSubtypes))]
     //[JsonSubtypes.KnownSubTypeWithProperty(typeof(Shared.EquipmentDescriptor), "Slot")]

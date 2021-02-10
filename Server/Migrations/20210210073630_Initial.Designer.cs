@@ -9,7 +9,7 @@ using Server;
 namespace Server.Migrations
 {
     [DbContext(typeof(GameDb))]
-    [Migration("20210206073818_Initial")]
+    [Migration("20210210073630_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -17,6 +17,25 @@ namespace Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.2");
+
+            modelBuilder.Entity("Server.Model.CombatEncounter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CR")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("CombatEncounter");
+                });
 
             modelBuilder.Entity("Server.Model.Equipped", b =>
                 {
@@ -240,6 +259,17 @@ namespace Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("DamageSkill");
+                });
+
+            modelBuilder.Entity("Server.Model.CombatEncounter", b =>
+                {
+                    b.HasOne("Server.Model.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("Server.Model.Equipped", b =>

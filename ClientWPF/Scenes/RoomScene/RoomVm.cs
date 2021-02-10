@@ -1,7 +1,7 @@
 ﻿using ClientWPF.Utils.Wpf;
 using ClientWPF.ViewModels;
 using Shared.Alerts;
-using Shared.Model.Interactables;
+using Shared.Descriptors;
 using Shared.Requests;
 using Shared.Requests.Rooms;
 using Shared.Responses;
@@ -63,8 +63,9 @@ namespace ClientWPF.Scenes.RoomScene
                 return new RelayCommand(o =>
                 {
                     InteractionDescriptor interaction = (InteractionDescriptor)o;
-                    var result = client.SendRequest(new InteractionRequest(interaction.Id), player);
-                    sceneManager.LookupScene(result);
+                    client.SendRequest(new InteractionRequest(interaction.Id), player).ContinueWith((result) => { 
+                        sceneManager.LookupScene(result.Result);
+                    });
                 });
             }
         }

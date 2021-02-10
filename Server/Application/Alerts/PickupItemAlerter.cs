@@ -1,6 +1,6 @@
 ﻿using Server.Application.Character;
-using Shared;
 using Shared.Alerts;
+using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Linq;

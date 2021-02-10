@@ -22,6 +22,8 @@ namespace ClientWPF.Utils.Wpf
         public static readonly DependencyProperty DragSourceProperty =
             DependencyProperty.RegisterAttached("DragSource", typeof(object), typeof(DragDropHelper), new FrameworkPropertyMetadata(DragSourceChanged));
 
+        
+
         private static void DragSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var element = (UIElement)d;

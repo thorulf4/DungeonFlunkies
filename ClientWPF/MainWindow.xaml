@@ -7,6 +7,7 @@
         xmlns:vm="clr-namespace:ClientWPF.ViewModels"
         xmlns:utils="clr-namespace:ClientWPF.Utils.Wpf"
         xmlns:scenes="clr-namespace:ClientWPF.Scenes.StartScreen"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="MainWindow" Height="762" Width="1319">
     <Window.Resources>
@@ -37,10 +38,16 @@
                     <Button DockPanel.Dock="Right" Command="{Binding SendMessage}">
                         Send
                     </Button>
-                    <TextBox Text="{Binding MessageInput, FallbackValue='Say something' }"></TextBox>
+                    <TextBox Text="{Binding MessageInput, FallbackValue='Say something' }">
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="KeyDown">
+                                <b:InvokeCommandAction Command="{Binding KeyDown}" PassEventArgsToCommand="True"/>
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
+                    </TextBox>
                 </DockPanel>
                 <TextBlock VerticalAlignment="Bottom" Text="{Binding ChatBox, FallbackValue='Thar: Hey this is a chat window'}">
-
+                    
                 </TextBlock>
             </DockPanel>
         </Grid>
@@ -52,6 +59,7 @@
             </Grid.RowDefinitions>
             <DockPanel DataContext="{Binding Sidebar, Mode=OneWay, Source={StaticResource locator}}">
                 <StackPanel DockPanel.Dock="Bottom">
+                    <Button Command="{Binding TempCombat}" Margin="1">TempCombat</Button>
                     <Button Command="{Binding Inventory}" Margin="1">Inventory</Button>
                     <Button Command="{Binding Logout}"  Margin="1">Log out</Button>
                 </StackPanel>

@@ -2,6 +2,7 @@
 using ClientWPF.Utils;
 using ClientWPF.ViewModels;
 using Shared;
+using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Text;

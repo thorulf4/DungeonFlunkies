@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Server.Application;
+using Server.Application.Alerts;
+using Server.Application.Character;
 using Server.Model;
 using Shared;
 using Shared.Alerts;
-using Shared.Model;
-using Shared.Model.Interactables;
+using Shared.Descriptors;
 using Shared.Requests;
 using Shared.Requests.Interactables;
 using Shared.Responses;
@@ -29,43 +31,26 @@ namespace Server.Interactables
             };
         }
 
-        public override Response Interact(Player player, GameDb context, IAlerter alerter)
+        public override Response Interact(Player player, GameDb context, Mediator mediator)
         {
             context.Interactables.Where(i => i.Id == Id).Include("LeadsTo");
-            AlertLeaving(player, context, alerter);
+            mediator.GetHandler<RoomUpdateAlerter>().Send(player.LocationId);
 
             player.Location = LeadsTo;
-
             context.SaveChanges();
 
-            InteractionDescriptor[] descriptors = context.Interactables.Where(i => i.RoomId == LeadsTo.Id).Select(i => i.GetDescriptor(context)).ToArray();
-            string[] names = context.Players.Where(p => p.Location.Id == LeadsTo.Id).Select(p => p.Name).ToArray();
+            mediator.GetHandler<RoomUpdateAlerter>().Send(LeadsTo.Id);
 
-            alerter.SendAlerts(new RoomAlert
-            {
-                Interactions = descriptors,
-                PeopleInRoom = names
-            }, names.Except(new string[] { player.Name }).ToArray());
+
+            string[] peopleInRoom = mediator.GetHandler<GetPlayer>().GetInRoom(LeadsTo.Id).Select(p => p.Name).ToArray();
+            var interactables = mediator.GetHandler<GetInteractable>().GetInRoom(LeadsTo.Id).ToArray();
 
             return Response.From(new RoomResponse
             {
                 RoomId = LeadsTo.Id,
-                Interactions = descriptors,
-                PeopleInRoom = names
+                Interactions = interactables.Select(i => i.GetDescriptor(context)).ToArray(),
+                PeopleInRoom = peopleInRoom
             });
-        }
-
-        private void AlertLeaving(Player player, GameDb context, IAlerter alerter)
-        {
-            InteractionDescriptor[] descriptors = context.Interactables.Where(i => i.RoomId == player.Location.Id).Select(i => i.GetDescriptor(context)).ToArray();
-            List<string> names = context.Players.Where(p => p.Location.Id == player.Location.Id).Select(p => p.Name).ToList();
-            names.Remove(player.Name);
-
-            alerter.SendAlerts(new RoomAlert
-            {
-                Interactions = descriptors,
-                PeopleInRoom = names.ToArray()
-            }, names);
         }
     }
 }

@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="ClientWPF.Scenes.Combat.ChooseTargetControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:ClientWPF.Scenes.Combat"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../TargetResource.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <b:Interaction.Triggers>
+            <b:EventTrigger EventName="MouseDown">
+                <b:InvokeCommandAction Command="{Binding MouseDown}" PassEventArgsToCommand="True"/>
+            </b:EventTrigger>
+        </b:Interaction.Triggers>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ContentControl Content="{Binding Path=ParentScene.Enemies}"/>
+        <Button Command="{Binding Back}" HorizontalAlignment="Left" VerticalAlignment="Top">
+            Back
+        </Button>
+        <ListBox Grid.Row="3" ItemsSource="{Binding Skills}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding Name}" Command="{Binding Path=DataContext.SkillSelected, ElementName=userControl}" 
+                            CommandParameter="{Binding}">
+
+                    </Button>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+    </Grid>
+</UserControl>

@@ -2,6 +2,7 @@
 using Server.Application.Character;
 using Server.Model.Items;
 using Shared;
+using Shared.Descriptors;
 using Shared.Requests.Character;
 using System;
 using System.Collections.Generic;

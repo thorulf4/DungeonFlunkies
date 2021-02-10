@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Windows.Input;
 
 namespace ClientWPF.ViewModels
 {
@@ -38,15 +39,35 @@ namespace ClientWPF.ViewModels
         public string ChatBox { get; set; }
         public string MessageInput { get; set; }
 
-        public RelayCommand SendMessage { get {
+        public RelayCommand KeyDown
+        {
+            get
+            {
                 return new RelayCommand(o =>
                 {
-                    client.SendAction(new SayRequest { Message = MessageInput }, player);
-                    MessageInput = "";
-                    Notify("MessageInput");
+                    var e = (KeyEventArgs)o;
+
+                    if (e.Key == Key.Enter)
+                    {
+                        Send();
+                    }
                 });
             }
         }
 
+        public RelayCommand SendMessage { get {
+                return new RelayCommand(o =>
+                {
+                    Send();
+                });
+            }
+        }
+
+        private void Send()
+        {
+            client.SendAction(new SayRequest { Message = MessageInput }, player);
+            MessageInput = "";
+            Notify("MessageInput");
+        }
     }
 }

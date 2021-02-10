@@ -2,6 +2,7 @@
 using Server.Model;
 using Server.Model.Items;
 using Shared;
+using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Linq;

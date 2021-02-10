@@ -3,6 +3,7 @@
                     xmlns:scenes="clr-namespace:ClientWPF.Scenes.StartScreen"
                     xmlns:room="clr-namespace:ClientWPF.Scenes.RoomScene"
                     xmlns:char="clr-namespace:ClientWPF.Scenes.Character"
+                    xmlns:combat="clr-namespace:ClientWPF.Scenes.Combat"
                     x:Name="SceneTemplatesDict">
     <DataTemplate DataType="{x:Type scenes:StartScreenVm}">
         <scenes:StartControl/>
@@ -12,6 +13,12 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type char:InventoryVm}">
         <char:InventoryControl/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type combat:ChooseVm}">
+        <combat:ChooseControl/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type combat:ChooseTargetVm}">
+        <combat:ChooseTargetControl/>
     </DataTemplate>
 
 

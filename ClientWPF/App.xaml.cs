@@ -1,4 +1,5 @@
 ﻿using ClientWPF.Scenes.Character;
+using ClientWPF.Scenes.Combat;
 using ClientWPF.Scenes.RoomScene;
 using ClientWPF.Scenes.StartScreen;
 using ClientWPF.ViewModels;
@@ -43,6 +44,7 @@ namespace ClientWPF
             services.AddTransient<StartScreenVm>();
             services.AddTransient<RoomVm>();
             services.AddTransient<InventoryVm>();
+            services.AddTransient<ChooseVm>();
 
             //Add storage services
             services.AddScoped<Player>();

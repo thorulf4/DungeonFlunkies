@@ -1,6 +1,7 @@
 ﻿using Server.Application;
 using Server.Application.Character;
 using Shared;
+using Shared.Descriptors;
 using Shared.Requests.Character;
 using System;
 using System.Collections.Generic;

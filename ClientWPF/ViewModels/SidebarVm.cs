@@ -1,4 +1,5 @@
 ﻿using ClientWPF.Scenes.Character;
+using ClientWPF.Scenes.Combat;
 using ClientWPF.Scenes.StartScreen;
 using ClientWPF.Utils.Wpf;
 using System;
@@ -33,7 +34,7 @@ namespace ClientWPF.ViewModels
                     sceneManager.PushScene(inventory);
                 });
             } }
-
+        
         public RelayCommand Logout
         {
             get
@@ -41,6 +42,17 @@ namespace ClientWPF.ViewModels
                 return new RelayCommand(o =>
                 {
                     sceneManager.SetScene<StartScreenVm>();
+                });
+            }
+        }
+
+        public RelayCommand TempCombat
+        {
+            get
+            {
+                return new RelayCommand(o =>
+                {
+                    sceneManager.PushScene<ChooseVm>();
                 });
             }
         }

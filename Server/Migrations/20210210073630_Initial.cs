@@ -59,6 +59,26 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CombatEncounter",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RoomId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CR = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CombatEncounter", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CombatEncounter_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Interactables",
                 columns: table => new
                 {
@@ -187,6 +207,11 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CombatEncounter_RoomId",
+                table: "CombatEncounter",
+                column: "RoomId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Equipped_ItemId",
                 table: "Equipped",
                 column: "ItemId");
@@ -229,6 +254,9 @@ namespace Server.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CombatEncounter");
+
             migrationBuilder.DropTable(
                 name: "Equipped");
 

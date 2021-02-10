@@ -16,14 +16,12 @@ namespace Server.RequestHandlers
         private GameDb context;
         private Mediator mediator;
         private Authenticator authenticator;
-        private IAlerter alerter;
 
-        public InteractionHandler(GameDb context, Mediator mediator, Authenticator authenticator, IAlerter alerter)
+        public InteractionHandler(GameDb context, Mediator mediator, Authenticator authenticator)
         {
             this.context = context;
             this.mediator = mediator;
             this.authenticator = authenticator;
-            this.alerter = alerter;
         }
 
         public override Response Handle(InteractionRequest request)
@@ -33,7 +31,7 @@ namespace Server.RequestHandlers
             Interactable interactable = mediator.GetHandler<GetInteractable>().Get(request.InteractableId);
             Player player = mediator.GetHandler<GetPlayer>().GetWithLocation(playerid);
 
-            Response result = interactable.Interact(player, context, alerter);
+            Response result = interactable.Interact(player, context, mediator);
             context.SaveChanges();
 
             return result;

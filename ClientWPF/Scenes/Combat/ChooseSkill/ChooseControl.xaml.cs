@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ClientWPF.Scenes.Combat.ChooseSkill
+namespace ClientWPF.Scenes.Combat
 {
     /// <summary>
     /// Interaction logic for ChooseControl.xaml

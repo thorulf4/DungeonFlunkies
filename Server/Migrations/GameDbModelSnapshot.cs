@@ -16,6 +16,25 @@ namespace Server.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.2");
 
+            modelBuilder.Entity("Server.Model.CombatEncounter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CR")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("CombatEncounter");
+                });
+
             modelBuilder.Entity("Server.Model.Equipped", b =>
                 {
                     b.Property<int>("Id")
@@ -238,6 +257,17 @@ namespace Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("DamageSkill");
+                });
+
+            modelBuilder.Entity("Server.Model.CombatEncounter", b =>
+                {
+                    b.HasOne("Server.Model.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("Server.Model.Equipped", b =>

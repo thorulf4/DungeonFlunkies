@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.Descriptors;
+using System;
 using System.Collections.Generic;
 using System.Text;
 

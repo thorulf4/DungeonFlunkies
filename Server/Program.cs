@@ -4,14 +4,17 @@ using Server.Application;
 using Server.Interactables;
 using Server.Model;
 using Server.Model.Items;
+using Server.Model.Skills;
 using Server.Pipelining;
 using Server.RequestHandlers;
 using Server.RequestHandlers.Character;
+using Server.RequestHandlers.Combat;
 using Server.RequestHandlers.Rooms;
 using Shared;
 using Shared.Requests;
 using Shared.Requests.Authentication;
 using Shared.Requests.Character;
+using Shared.Requests.Combat;
 using Shared.Requests.Rooms;
 using System;
 using System.Linq;
@@ -41,23 +44,34 @@ namespace Server
                 {
                     Room room1 = new Room();
                     Room room2 = new Room();
-                    Equipment money = new Equipment { BaseValue = 1, Name = "Sword", Type = EquipmentType.Holdable };
+                    Equipment sword = new Equipment { BaseValue = 1, Name = "Sword", Type = EquipmentType.Holdable };
 
                     context.Add(room1);
                     context.Add(room2);
-                    context.Add(money);
+                    context.Add(sword);
 
 
                     context.SaveChanges();
 
+                    DamageSkill swing = new DamageSkill
+                    {
+                        Cooldown = 1,
+                        Damage = 10,
+                        Description = "You swing your sword at your enemy",
+                        Name = "Swing",
+                        Item = sword
+                    };
+                    context.Add(swing);
+
                     room1.Interactables.Add(new Path { LeadsTo = context.Rooms.Find(room2.Id) });
                     room2.Interactables.Add(new Path { LeadsTo = context.Rooms.Find(room1.Id) });
+                    room2.Interactables.Add(new OptionalCombat { RoomId = room2.Id });
 
 
                     context.SaveChanges();
 
                     startingRoomId = room1.Id;
-                    testSwordId = money.Id;
+                    testSwordId = sword.Id;
                 }
                 else
                 {
@@ -93,6 +107,7 @@ namespace Server
             configure.AddHandler<PickupItemRequest, PickupItemHandler>();
             configure.AddHandler<EquipItemRequest, EquipItemHandler>();
             configure.AddHandler<UnequipItemRequest, UnequipItemHandler>();
+            configure.AddHandler<GetEncounterRequest, GetEncounterHandler>();
         }
     }
 }

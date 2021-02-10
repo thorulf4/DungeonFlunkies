@@ -43,7 +43,9 @@ namespace Server
         {
             lock (users)
             {
-                //TODO crashes if same thread logouts and logins in again
+                if (users.ContainsKey(Thread.CurrentThread))
+                    users.Remove(Thread.CurrentThread);
+
                 users.Add(Thread.CurrentThread, username);
             }
         }

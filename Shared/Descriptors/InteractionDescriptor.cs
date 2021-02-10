@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shared.Model.Interactables
+namespace Shared.Descriptors
 {
     public class InteractionDescriptor
     {

@@ -2,7 +2,6 @@
 using Server.Model;
 using Server.Model.Items;
 using Server.Model.Skills;
-using Shared.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,6 +69,8 @@ namespace Server
 
             modelBuilder.Entity<Equipped>().HasOne<Item>("Item").WithMany().HasForeignKey("ItemId").IsRequired().OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Equipped>().HasOne<Player>("Player").WithMany("Equipment").HasForeignKey("PlayerId").IsRequired().OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CombatEncounter>().HasOne<Room>("Room").WithMany().HasForeignKey("RoomId").IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
 
         void ISavable.Save() => SaveChanges();

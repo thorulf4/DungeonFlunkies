@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Server.Application.Alerts;
 using Server.Application.Character;
+using Server.Application.Combat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,8 @@ namespace Server.Application
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IApplicationLogic))).ToArray();
             foreach (var type in types)
                 services.AddTransient(type);
+
+            services.AddSingleton<CombatManager>();
         }
     }
 

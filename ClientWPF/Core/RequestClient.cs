@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace ClientWPF
@@ -24,7 +25,9 @@ namespace ClientWPF
         public bool IsConnected { get { return client != null && client.Connected; } }
 
         private readonly Thread receivingThread;
-        private readonly Queue<Response> responses = new Queue<Response>();
+        private readonly Dictionary<int,Response> responses = new Dictionary<int, Response>();
+        private int sequence = 0;
+
         private readonly Dictionary<Type, Dictionary<object, List<Action<object>>>> callbacks = new Dictionary<Type, Dictionary<object, List<Action<object>>>>();
 
         public event EventHandler<RequestFailure> OnFailReceived;
@@ -66,6 +69,7 @@ namespace ClientWPF
 
         private void ReceivePackets(object obj)
         {
+            int receivingSeq = 0;
             while (true)
             {
                 if (IsConnected && client.Available > 0)
@@ -91,7 +95,7 @@ namespace ClientWPF
                         {
                             lock (responses)
                             {
-                                responses.Enqueue(new Response(data, type));
+                                responses.Add(receivingSeq, new Response(data, type));
                             }
                         }
 
@@ -118,27 +122,46 @@ namespace ClientWPF
             }
         }
 
-        private void Send(object request)
+        private int Send(object request)
         {
             EnforceConnection();
 
             using BinaryWriter writer = new BinaryWriter(client.GetStream(), Encoding.ASCII, leaveOpen: true);
             writer.Write($"{request.GetType().AssemblyQualifiedName}\n{JsonConvert.SerializeObject(request)}");
+
+            return sequence++;
         }
 
-        public Response SendRequest<TRequest>(TRequest request, Player credentials) where TRequest : AuthenticatedRequest
+        public async Task<Response> SendRequest<TRequest>(TRequest request, Player credentials) where TRequest : AuthenticatedRequest
         {
             request.Name = credentials.Name;
             request.SessionId = credentials.SessionToken;
 
-            Send(request);
-            return WaitForResponse();
+            int seq = Send(request);
+
+            return await WaitForResponse(seq);
+        }
+
+        private Task<Response> WaitForResponse(int seq)
+        {
+            return Task.Run(() =>
+            {
+                while (!responses.ContainsKey(seq)) ;
+
+                lock (responses)
+                {
+                    var response = responses[seq];
+                    responses.Remove(seq);
+                    return response;
+                }
+            });
         }
 
         public Response SendRequest(object request)
         {
-            Send(request);
-            return WaitForResponse();
+            int seq = Send(request);
+
+            return WaitForResponse(seq).GetAwaiter().GetResult();
         }
 
         public void SendAction<TRequest>(TRequest request, Player credentials) where TRequest : AuthenticatedRequest
@@ -147,12 +170,7 @@ namespace ClientWPF
             request.SessionId = credentials.SessionToken;
 
             Send(request);
-        }
-
-        private Response WaitForResponse()
-        {
-            while (responses.Count == 0) ;
-            return responses.Dequeue();
+            sequence--;
         }
     }
 }
