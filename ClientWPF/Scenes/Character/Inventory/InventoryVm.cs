@@ -40,8 +40,12 @@ namespace ClientWPF.Scenes.Character
             Items = new DroppableList();
             DroppedItems = new DroppableList();
             Equipment = new Equipment();
+            GetInventory();
+        }
 
-            var result = client.SendRequest(new GetInventoryRequest(), player);
+        private async void GetInventory()
+        {
+            var result = await client.SendRequest(new GetInventoryRequest(), player);
 
             if (result.Success && result.data is InventoryResponse response)
             {

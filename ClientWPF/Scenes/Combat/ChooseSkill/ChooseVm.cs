@@ -34,10 +34,10 @@ namespace ClientWPF.Scenes.Combat
                 MaxHealth = 100
             });
 
-            GetEncounter(client, player);
+            GetEncounter();
         }
 
-        private async void GetEncounter(RequestClient client, Player player)
+        private async void GetEncounter()
         {
             Response result = await client.SendRequest(new GetEncounterRequest(), player);
 

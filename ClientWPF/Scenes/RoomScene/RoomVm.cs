@@ -30,13 +30,22 @@ namespace ClientWPF.Scenes.RoomScene
             this.player = player;
 
             client.SubscribeTo<RoomAlert>(this, OnRoomUpdate);
+            UpdateRoom();
+        }
 
-            var result = client.SendRequest(new GetRoomRequest(), player);
+        private async void UpdateRoom()
+        {
+            var result = await client.SendRequest(new GetRoomRequest(), player);
+
             if (result.Success && result.data is RoomResponse room)
             {
                 RoomId = room.RoomId;
                 People = room.PeopleInRoom.Aggregate((a, b) => $"{a}, {b}");
                 Interactions = room.Interactions.ToList().AsReadOnly();
+
+                Notify("People");
+                Notify("Interactions");
+
             }
             else
             {

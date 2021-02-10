@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Server.Application.Combat
 {
-    public class GetEncounter
+    public class GetEncounter : IApplicationLogic
     {
         private readonly GameDb context;
         private readonly Mediator mediator;
