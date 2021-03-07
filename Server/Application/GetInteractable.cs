@@ -1,4 +1,5 @@
-﻿using Server.Model;
+﻿using Server.Application.Interactables;
+using Server.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,12 @@ namespace Server.Application
     public class GetInteractable : IApplicationLogic
     {
         private readonly GameDb context;
+        private readonly Mediator mediator;
 
-        public GetInteractable(GameDb context)
+        public GetInteractable(GameDb context, Mediator mediator)
         {
             this.context = context;
+            this.mediator = mediator;
         }
 
         public Interactable Get(int id)
@@ -22,9 +25,7 @@ namespace Server.Application
 
         public T GetInRoom<T>(int roomId) where T : Interactable
         {
-            return (from i in context.Interactables
-                    where i.RoomId == roomId && i is T
-                    select i).SingleOrDefault() as T;
+            return GetInRoom(roomId).SingleOrDefault(i => i is T) as T;
         }
 
         public T GetOrCreate<T>(int roomId, T defaultT) where T : Interactable
@@ -40,9 +41,9 @@ namespace Server.Application
             return interactable;
         }
 
-        public List<Interactable> GetInRoom(int roomId)
+        public List<IInteractable> GetInRoom(int roomId)
         {
-            return context.Interactables.Where(i => i.RoomId == roomId).ToList();
+            return context.Interactables.Where(i => i.RoomId == roomId).ToList().Union<IInteractable>(mediator.GetHandler<DynamicInteractables>().GetForRoom(roomId)).ToList();
         }
 
         public ISavable Delete(int id)

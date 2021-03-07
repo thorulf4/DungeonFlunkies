@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:ClientWPF.Scenes.Combat">
+    <DataTemplate DataType="{x:Type local:TurnTimer}">
+        <ProgressBar Height="10px" Maximum="100" Value="{Binding TimeLeftPct}">
+
+        </ProgressBar>
+    </DataTemplate>
+</ResourceDictionary>

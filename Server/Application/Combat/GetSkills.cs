@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Model.Items;
 using Server.Model.Skills;
+using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,16 @@ namespace Server.Application.Combat
         public List<Skill> GetFromPlayer(int playerId)
         {
             return context.Equipped.Where(e => e.PlayerId == playerId).Include(e => e.Item).ThenInclude(i => ((Equipment)i).Skills).SelectMany(o => ((Equipment)o.Item).Skills).ToList();
+        }
+
+        public Skill Get(SkillDescriptor skill)
+        {
+            return context.Skills.Find(skill.Id);
+        }
+
+        public Skill Get(int skillId)
+        {
+            return context.Skills.Find(skillId);
         }
     }
 }

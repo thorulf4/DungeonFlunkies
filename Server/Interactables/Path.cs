@@ -7,7 +7,6 @@ using Shared;
 using Shared.Alerts;
 using Shared.Descriptors;
 using Shared.Requests;
-using Shared.Requests.Interactables;
 using Shared.Responses;
 using System;
 using System.Collections.Generic;

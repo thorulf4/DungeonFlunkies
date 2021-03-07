@@ -11,6 +11,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../TargetResource.xaml"/>
+                <ResourceDictionary Source="../TurnTimerResource.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -30,22 +31,28 @@
         <Button Command="{Binding Back}" HorizontalAlignment="Left" VerticalAlignment="Top">
             Back
         </Button>
-        <ListBox Grid.Row="3" ItemsSource="{Binding Skills}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Button Content="{Binding Name}" Command="{Binding Path=DataContext.SkillSelected, ElementName=userControl}" 
-                            CommandParameter="{Binding}">
 
-                    </Button>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-        </ListBox>
+        <ContentControl Grid.Row="2" Content="{Binding ParentScene.Allies}"/>
+
+        <DockPanel Grid.Row="3">
+            <ContentControl DockPanel.Dock="Top" Content="{Binding}" DataContext="{Binding ParentScene.Timer}"/>
+
+            <ListBox Grid.Row="3" IsEnabled="False" ItemsSource="{Binding ParentScene.Skills}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Name}">
+
+                        </Button>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </DockPanel>
     </Grid>
 </UserControl>

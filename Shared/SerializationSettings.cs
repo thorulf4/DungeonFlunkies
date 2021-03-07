@@ -28,6 +28,13 @@ namespace Shared
                 .RegisterSubtype<EquipmentDescriptor>("Equipment")
                 .SerializeDiscriminatorProperty() // ask to serialize the type property
                 .Build());
+
+            stg.Converters.Add(JsonSubtypesConverterBuilder
+                .Of(typeof(InteractionDescriptor), "Type") // type property is only defined here
+                .RegisterSubtype<InteractionDescriptor>("Interaction")
+                .RegisterSubtype<DynamicInteractionDescriptor>("DynamicInteraction")
+                .SerializeDiscriminatorProperty() // ask to serialize the type property
+                .Build());
             return stg;
         }
     }

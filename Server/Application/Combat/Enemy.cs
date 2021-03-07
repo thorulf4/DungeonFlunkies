@@ -5,12 +5,8 @@ using System.Text;
 
 namespace Server.Application.Combat
 {
-    public class Enemy
+    public class Enemy : CombatEntity
     {
-        public string name;
-        public int health;
-        public int maxHealth;
-        public List<SkillDescriptor> skills;
 
         public Enemy(string name, int maxHealth, List<SkillDescriptor> skills)
         {
@@ -18,6 +14,13 @@ namespace Server.Application.Combat
             this.maxHealth = maxHealth;
             this.skills = skills;
             health = maxHealth;
+
+            alive = true;
+        }
+
+        public override void Die()
+        {
+            alive = false;
         }
     }
 }

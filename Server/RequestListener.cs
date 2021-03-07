@@ -179,7 +179,9 @@ namespace Server
         private Response CallRequestHandler(string strType, string json)
         {
             Type type = Type.GetType(strType);
-            object data = JsonConvert.DeserializeObject(json, type);
+            object data = JsonConvert.DeserializeObject(json, type, SerializationSettings.current);
+
+
 
             if(data is InteractionRequest)
             {

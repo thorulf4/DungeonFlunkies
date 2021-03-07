@@ -43,9 +43,9 @@ namespace ClientWPF.Scenes.RoomScene
                 People = room.PeopleInRoom.Aggregate((a, b) => $"{a}, {b}");
                 Interactions = room.Interactions.ToList().AsReadOnly();
 
+                Notify("RoomId");
                 Notify("People");
                 Notify("Interactions");
-
             }
             else
             {
@@ -64,7 +64,7 @@ namespace ClientWPF.Scenes.RoomScene
 
         public override void Unload()
         {
-            client.Unsubscribe(this);
+            client.UnsubscribeAll(this);
         }
 
         public RelayCommand Interact { get
@@ -72,7 +72,7 @@ namespace ClientWPF.Scenes.RoomScene
                 return new RelayCommand(o =>
                 {
                     InteractionDescriptor interaction = (InteractionDescriptor)o;
-                    client.SendRequest(new InteractionRequest(interaction.Id), player).ContinueWith((result) => { 
+                    client.SendRequest(new InteractionRequest(interaction), player).ContinueWith((result) => { 
                         sceneManager.LookupScene(result.Result);
                     });
                 });

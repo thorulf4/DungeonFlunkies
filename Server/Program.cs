@@ -56,10 +56,11 @@ namespace Server
                     DamageSkill swing = new DamageSkill
                     {
                         Cooldown = 1,
-                        Damage = 10,
+                        Damage = 65,
                         Description = "You swing your sword at your enemy",
                         Name = "Swing",
-                        Item = sword
+                        Item = sword,
+                        UsesAction = true
                     };
                     context.Add(swing);
 
@@ -88,6 +89,7 @@ namespace Server
                 services.AddSingleton<Authenticator>();
                 services.AddSingleton<IAlerter>(listener);
                 services.AddSingleton<Mediator>();
+                services.AddSingleton<DispatcherService>(new DispatcherService());
             });
             configure.AddMiddleware(new Debugger());
             configure.AddInteractionHandler<InteractionHandler>();
@@ -108,6 +110,8 @@ namespace Server
             configure.AddHandler<EquipItemRequest, EquipItemHandler>();
             configure.AddHandler<UnequipItemRequest, UnequipItemHandler>();
             configure.AddHandler<GetEncounterRequest, GetEncounterHandler>();
+            configure.AddHandler<UseSkillRequest, UseSkillHandler>();
+            configure.AddHandler<EndTurnRequest, EndTurnHandler>();
         }
     }
 }

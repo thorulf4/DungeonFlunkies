@@ -149,7 +149,7 @@ namespace ClientWPF.Scenes.Character
 
         public override void Unload()
         {
-            client.Unsubscribe(this);
+            client.UnsubscribeAll(this);
         }
     }
 }

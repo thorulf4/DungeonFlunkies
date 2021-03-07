@@ -8,13 +8,12 @@ using System.Text;
 
 namespace Server.Model
 {
-    public abstract class Interactable : Entity
+    public abstract class Interactable : Entity, IInteractable
     {
         public int RoomId { get; set; }
         public Room Room { get; set; }
 
-        public abstract Response Interact(Player player, GameDb context, Mediator mediator);
-
         public abstract InteractionDescriptor GetDescriptor(GameDb context);
+        public abstract Response Interact(Player player, GameDb context, Mediator mediator);
     }
 }

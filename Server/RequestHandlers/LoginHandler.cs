@@ -1,5 +1,7 @@
 ﻿using Server.Application;
 using Server.Application.Character;
+using Server.Application.Interactables;
+using Server.Interactables;
 using Server.Model;
 using Shared;
 using Shared.Requests;

@@ -17,10 +17,18 @@ namespace Server.Pipelining
 
         public Response SendRequest(object request, IHandler handler)
         {
-            foreach (IMiddleware middleware in middlewares)
-                middleware.Handle(request);
+            //Uncomment for a more stable play experience
+            //try
+            //{
+                foreach (IMiddleware middleware in middlewares)
+                    middleware.Handle(request);
 
-            return handler.Handle(request);
+                return handler.Handle(request);
+            //}catch(Exception e)
+            //{
+            //    Console.WriteLine($"Exception: " + e.Message);
+            //    return Response.Fail("Exception happened on the server");
+            //}
         }
     }
 }

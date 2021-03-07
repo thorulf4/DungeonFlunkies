@@ -44,6 +44,8 @@ namespace Server.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     Cooldown = table.Column<int>(type: "INTEGER", nullable: false),
+                    UsesAction = table.Column<bool>(type: "INTEGER", nullable: false),
+                    UsesBonusAction = table.Column<bool>(type: "INTEGER", nullable: false),
                     skill_type = table.Column<string>(type: "TEXT", nullable: false),
                     Damage = table.Column<int>(type: "INTEGER", nullable: true)
                 },
@@ -113,6 +115,7 @@ namespace Server.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Secret = table.Column<string>(type: "TEXT", nullable: true),
+                    Health = table.Column<int>(type: "INTEGER", nullable: false),
                     LocationId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.Descriptors;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,11 +7,11 @@ namespace Shared.Requests
 {
     public class InteractionRequest : AuthenticatedRequest
     {
-        public int InteractableId { get; set; }
+        public InteractionDescriptor Interaction { get; set; }
 
-        public InteractionRequest(int interactableId)
+        public InteractionRequest(InteractionDescriptor Interaction)
         {
-            InteractableId = interactableId;
+            this.Interaction = Interaction;
         }
     }
 }

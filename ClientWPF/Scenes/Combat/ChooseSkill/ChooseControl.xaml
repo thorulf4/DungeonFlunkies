@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:ClientWPF.Scenes.Combat"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -10,8 +11,10 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../TargetResource.xaml"/>
+                <ResourceDictionary Source="../TurnTimerResource.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
+        
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -23,22 +26,58 @@
         <Button Command="{Binding Back}" HorizontalAlignment="Left" VerticalAlignment="Top">
             Back
         </Button>
-        <ListBox Grid.Row="3" ItemsSource="{Binding Skills}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Button Content="{Binding Name}" Command="{Binding Path=DataContext.SkillSelected, ElementName=userControl}" 
+
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80px"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="80px"/>
+            </Grid.ColumnDefinitions>
+            
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Action: "/>
+                    <TextBlock Text="Bonus: "/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{Binding HasAction}"/>
+                    <TextBlock Text="{Binding HasBonusAction}"/>
+                </StackPanel>
+            </Grid>
+            
+            <ContentControl Grid.Column="1" Content="{Binding Allies}"/>
+
+            <Button Grid.Column="2" MaxHeight="50px" Margin="3" Command="{Binding EndTurn}">
+                End turn
+            </Button>
+        </Grid> 
+
+        <DockPanel Grid.Row="3">
+            <ContentControl DockPanel.Dock="Top" Content="{Binding}" DataContext="{Binding Timer}"/>
+
+            <ListBox ItemsSource="{Binding Skills}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Name}" Command="{Binding Path=DataContext.SkillSelected, ElementName=userControl}" 
                             CommandParameter="{Binding}">
 
-                    </Button>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"
+                        </Button>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-        </ListBox>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </DockPanel>
     </Grid>
 </UserControl>

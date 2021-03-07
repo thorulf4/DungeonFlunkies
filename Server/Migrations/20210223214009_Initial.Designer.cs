@@ -9,7 +9,7 @@ using Server;
 namespace Server.Migrations
 {
     [DbContext(typeof(GameDb))]
-    [Migration("20210210073630_Initial")]
+    [Migration("20210223214009_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,6 +157,9 @@ namespace Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Health")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("LocationId")
                         .HasColumnType("INTEGER");
 
@@ -202,6 +205,12 @@ namespace Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("UsesAction")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("UsesBonusAction")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("skill_type")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -220,6 +229,13 @@ namespace Server.Migrations
                     b.HasBaseType("Server.Model.Interactable");
 
                     b.HasDiscriminator().HasValue("Loot");
+                });
+
+            modelBuilder.Entity("Server.Interactables.OptionalCombat", b =>
+                {
+                    b.HasBaseType("Server.Model.Interactable");
+
+                    b.HasDiscriminator().HasValue("OptionalCombat");
                 });
 
             modelBuilder.Entity("Server.Interactables.Path", b =>

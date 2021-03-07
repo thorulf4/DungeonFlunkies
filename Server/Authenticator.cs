@@ -43,7 +43,7 @@ namespace Server
 
         private string CreateSessionHash(string name, DateTime expiryTime)
         {
-            byte[] data = Encoding.UTF8.GetBytes(name + expiryTime.ToString());
+            byte[] data = Encoding.ASCII.GetBytes(name + expiryTime.ToString());
 
             using (SHA256 sha256 = SHA256.Create())
             {

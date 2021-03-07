@@ -56,6 +56,11 @@ namespace ClientWPF.Scenes.Combat
             return targets.GetEnumerator();
         }
 
+        public void AddRange(List<Target> list)
+        {
+            targets.AddRange(list);
+        }
+
         public int IndexOf(Target item)
         {
             return targets.IndexOf(item);

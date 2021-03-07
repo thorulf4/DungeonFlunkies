@@ -28,9 +28,9 @@ namespace ClientWPF.Scenes.StartScreen
 
         public RelayCommand Login { get
             {
-                return new RelayCommand(o =>
+                return new RelayCommand(async o =>
                 {
-                    Response result = client.SendRequest(new LoginRequest
+                    Response result = await client.SendRequest(new LoginRequest
                     {
                         Name = this.Name,
                         Secret = Password
@@ -43,13 +43,17 @@ namespace ClientWPF.Scenes.StartScreen
 
                         sceneManager.SetScene<RoomVm>();
                     }
-                    else
+                    else if(!result.Success)
                     {
                         var scene = sceneManager.CreateScene<StartScreenVm>();
                         scene.Name = Name;
                         scene.Password = Password;
                         scene.Message = result.exception.Message;
                         sceneManager.SetScene(scene);
+                    }
+                    else
+                    {
+                        throw new Exception("Unexpected output");
                     }
                 });
             }
@@ -59,9 +63,9 @@ namespace ClientWPF.Scenes.StartScreen
         {
             get
             {
-                return new RelayCommand(o =>
+                return new RelayCommand(async o =>
                 {
-                    Response result = client.SendRequest(new CreateCharacterRequest
+                    Response result = await client.SendRequest(new CreateCharacterRequest
                     {
                         Name = this.Name,
                         Secret = Password
@@ -74,13 +78,17 @@ namespace ClientWPF.Scenes.StartScreen
 
                         sceneManager.SetScene<RoomVm>();
                     }
-                    else
+                    else if (!result.Success && result.data is RequestFailure exception)
                     {
                         var scene = sceneManager.CreateScene<StartScreenVm>();
                         scene.Name = Name;
                         scene.Password = Password;
-                        scene.Message = result.exception.Message;
+                        scene.Message = exception.Message;
                         sceneManager.SetScene(scene);
+                    }
+                    else
+                    {
+                        throw new Exception("Unexpected output");
                     }
                 });
             }

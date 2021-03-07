@@ -21,11 +21,11 @@ namespace Server.Application.Combat
         public CombatEncounterResponse Get(int playerId)
         {
             var encounter = mediator.GetHandler<CombatManager>().GetEncounter(playerId);
-            var skills = mediator.GetHandler<GetSkills>().GetFromPlayer(playerId).Select(s => new SkillDescriptor(s.Name, s.Description, s.Cooldown)).ToList();
+            var skills = encounter.playerTeam.First(p => p is CombatPlayer player && player.playerId == playerId).skills;
 
             return new CombatEncounterResponse( skills,
-                                                encounter.enemies.Select(e => new EntityDescriptor(e.name, e.health, e.maxHealth)).ToList(),
-                                                encounter.players.Select(p => new EntityDescriptor(p.Name, 100, 100)).ToList());
+                                                encounter.enemyTeam.Where(e => e.alive).Select(e => e.GetDescriptor()).ToList(),
+                                                encounter.playerTeam.Where(e => e.alive).Select(p => p.GetDescriptor()).ToList());
         }
     }
 }

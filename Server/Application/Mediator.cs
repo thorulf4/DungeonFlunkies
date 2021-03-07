@@ -16,11 +16,12 @@ namespace Server.Application
         private IServiceProvider provider;
         private ServiceCollection services;
 
-        public Mediator(GameDb context, IAlerter alerter)
+        public Mediator(GameDb context, IAlerter alerter, DispatcherService dispatcherService)
         {
             services = new ServiceCollection();
             services.AddSingleton(context);
             services.AddSingleton(alerter);
+            services.AddSingleton(dispatcherService);
             services.AddSingleton(this);
             AddHandlers();
             CreateProvider();

@@ -14,7 +14,7 @@ namespace ClientWPF.Scenes.Combat
 
         public ChooseVm ParentScene { get; set; }
 
-        public ChooseTargetVm(SceneManagerVm sceneManager, ChooseVm chooseVm, Action<Target> callback)
+        public ChooseTargetVm(SceneManagerVm sceneManager,  ChooseVm chooseVm, Action<Target> callback)
         {
             ParentScene = chooseVm;
             this.sceneManager = sceneManager;

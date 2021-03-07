@@ -25,8 +25,8 @@ namespace ClientWPF
         public bool IsConnected { get { return client != null && client.Connected; } }
 
         private readonly Thread receivingThread;
-        private readonly Dictionary<int,Response> responses = new Dictionary<int, Response>();
-        private int sequence = 0;
+        private readonly Dictionary<long,Response> responses = new Dictionary<long, Response>();
+        private long sequence = 0;
 
         private readonly Dictionary<Type, Dictionary<object, List<Action<object>>>> callbacks = new Dictionary<Type, Dictionary<object, List<Action<object>>>>();
 
@@ -61,7 +61,7 @@ namespace ClientWPF
             }
         }
 
-        public void Unsubscribe(object sender)
+        public void UnsubscribeAll(object sender)
         {
             lock (callbacks)
             {
@@ -85,8 +85,11 @@ namespace ClientWPF
                     Type type = Type.GetType(response[0]);
                     object data = JsonConvert.DeserializeObject(response[1], type, SerializationSettings.current);
 
-                    if (type.IsSubclassOf(typeof(Alert)) && callbacks.ContainsKey(type))
+                    if (type.IsSubclassOf(typeof(Alert)))
                     {
+                        if (!callbacks.ContainsKey(type))
+                            continue;
+
                         lock (callbacks)
                         {
                             foreach (var x in callbacks[type].Values)
@@ -99,7 +102,15 @@ namespace ClientWPF
                     else
                     {
                         if (type == typeof(RequestFailure))
-                            dispatcher.Invoke(() => OnFailReceived?.Invoke(this, (RequestFailure)data));
+                        {
+                            var exception = (RequestFailure)data;
+
+                            dispatcher.Invoke(() => OnFailReceived?.Invoke(this, exception));
+                            lock (responses)
+                            {
+                                responses.Add(receivingSeq++, new Response(exception));
+                            }
+                        }
                         else
                         {
                             lock (responses)
@@ -131,27 +142,27 @@ namespace ClientWPF
             }
         }
 
-        private int Send(object request)
+        private long Send(object request)
         {
             EnforceConnection();
 
             using BinaryWriter writer = new BinaryWriter(client.GetStream(), Encoding.ASCII, leaveOpen: true);
-            writer.Write($"{request.GetType().AssemblyQualifiedName}\n{JsonConvert.SerializeObject(request)}");
+            writer.Write($"{request.GetType().AssemblyQualifiedName}\n{JsonConvert.SerializeObject(request, SerializationSettings.current)}");
 
             return sequence++;
         }
 
-        public async Task<Response> SendRequest<TRequest>(TRequest request, Player credentials) where TRequest : AuthenticatedRequest
+        public Task<Response> SendRequest<TRequest>(TRequest request, Player credentials) where TRequest : AuthenticatedRequest
         {
             request.Name = credentials.Name;
             request.SessionId = credentials.SessionToken;
 
-            int seq = Send(request);
+            long seq = Send(request);
 
-            return await WaitForResponse(seq);
+            return WaitForResponse(seq);
         }
 
-        private Task<Response> WaitForResponse(int seq)
+        private Task<Response> WaitForResponse(long seq)
         {
             return Task.Run(() =>
             {
@@ -171,11 +182,11 @@ namespace ClientWPF
             });
         }
 
-        public Response SendRequest(object request)
+        public Task<Response> SendRequest(object request)
         {
-            int seq = Send(request);
+            long seq = Send(request);
 
-            return WaitForResponse(seq).GetAwaiter().GetResult();
+            return WaitForResponse(seq);
         }
 
         public void SendAction<TRequest>(TRequest request, Player credentials) where TRequest : AuthenticatedRequest
