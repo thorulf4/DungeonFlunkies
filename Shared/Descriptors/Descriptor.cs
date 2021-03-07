@@ -1,5 +1,4 @@
-﻿using JsonSubTypes;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Shared.Descriptors
 {
