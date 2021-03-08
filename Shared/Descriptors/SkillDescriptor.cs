@@ -16,6 +16,8 @@ namespace Shared.Descriptors
         public bool UsesBonusAction { get; set; }
 
 
+        public bool OnCooldown => CurrentCooldown <= 0; 
+
         public SkillDescriptor()
         {
 
