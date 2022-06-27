@@ -104,12 +104,13 @@ namespace ClientWPF.ViewModels
             Notify("CurrentScene");
         }
 
-        public void PushScene<T>() where T : Scene
+        public T PushScene<T>() where T : Scene
         {
             var scene = provider.GetRequiredService<T>();
             scenes.Push(scene);
             CurrentScene = scene;
             Notify("CurrentScene");
+            return scene;
         }
 
         public bool StackContains<T>(T scene) where T : Scene

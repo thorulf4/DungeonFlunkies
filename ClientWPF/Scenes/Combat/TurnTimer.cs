@@ -10,15 +10,15 @@ namespace ClientWPF.Scenes.Combat
 {
     public class TurnTimer : ViewModel, IDisposable
     {
-        public float TimeLeftPct { get; set; }
+        public double TimeLeftPct { get; set; }
 
-        private readonly long turnTimeMillis;
+        private readonly double turnTimeMillis;
         private readonly Stopwatch currentTime;
-        private int delayOffset;
+        private double delayOffset;
 
         private DispatcherTimer dispatcherTimer;
 
-        public TurnTimer(long turnTimeInMs)
+        public TurnTimer(double turnTimeInMs)
         {
             turnTimeMillis = turnTimeInMs;
             currentTime = Stopwatch.StartNew();
@@ -39,9 +39,9 @@ namespace ClientWPF.Scenes.Combat
 
         private void Update(object sender, EventArgs e)
         {
-            float timePassed = MathF.Min(turnTimeMillis, (currentTime.ElapsedMilliseconds + delayOffset));
+            double timePassed = Math.Min(turnTimeMillis, (currentTime.ElapsedMilliseconds + delayOffset));
 
-            TimeLeftPct = (1f - timePassed / turnTimeMillis) * 100f;
+            TimeLeftPct = (1f - timePassed / turnTimeMillis) * 100.0;
             Notify("TimeLeftPct");
         }
 
@@ -49,6 +49,15 @@ namespace ClientWPF.Scenes.Combat
         {
             dispatcherTimer.Stop();
             dispatcherTimer = null;
+        }
+
+        public void SetEndTime(DateTime turnEnds)
+        {
+            double timePassed = turnEnds.Subtract(DateTime.Now).TotalMilliseconds;
+            currentTime.Restart();
+            delayOffset = turnTimeMillis - timePassed;
+            TimeLeftPct = (1f - timePassed / turnTimeMillis) * 100.0;
+            Notify("TimeLeftPct");
         }
     }
 }

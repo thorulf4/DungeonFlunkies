@@ -16,6 +16,7 @@ namespace Server.Application.Combat
         public int roomId;
 
         public DispatcherService.QueuedInvocation nextTurnInvocation;
+        public DateTime nextTurn;
         internal JoinCombat joinInteraction;
 
         public Encounter(List<Enemy> enemies, List<CombatPlayer> players)

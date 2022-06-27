@@ -69,7 +69,7 @@ namespace ClientWPF.Scenes.Combat
             if (result.Success && result.data is CombatEncounterResponse response)
             {
                 Skills = response.Skills.AsReadOnly();
-
+                Timer.SetEndTime(response.TurnEnds);
                 UpdateEncounter(response.Enemies, response.Allies);
 
                 var currentPlayer = response.Allies.First(p => p.Name == player.Name);

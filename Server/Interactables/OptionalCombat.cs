@@ -26,7 +26,7 @@ namespace Server.Interactables
         public override Response Interact(Player player, GameDb context, Mediator mediator)
         {
             mediator.GetHandler<CombatManager>().StartEncounter(0, player);
-            var response = mediator.GetHandler<GetEncounter>().Get(player.Id);
+            CombatEncounterResponse response = mediator.GetHandler<GetEncounter>().Get(player.Id);
             return Response.From(response);
         }
     }

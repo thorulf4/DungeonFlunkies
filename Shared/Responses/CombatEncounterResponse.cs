@@ -10,12 +10,14 @@ namespace Shared.Responses
         public List<SkillDescriptor> Skills { get; set; }
         public List<EntityDescriptor> Enemies { get; set; }
         public List<EntityDescriptor> Allies { get; set; }
+        public DateTime TurnEnds { get; set; }
 
-        public CombatEncounterResponse(List<SkillDescriptor> skills, List<EntityDescriptor> enemies, List<EntityDescriptor> allies)
+        public CombatEncounterResponse(List<SkillDescriptor> skills, List<EntityDescriptor> enemies, List<EntityDescriptor> allies, DateTime turnEnds)
         {
             Skills = skills;
             Enemies = enemies;
             Allies = allies;
+            TurnEnds = turnEnds;
         }
     }
 }

@@ -23,7 +23,9 @@ namespace Server.Application.Combat.AI
             {
                 int target = entityEnemies[random.Next(entityEnemies.Count)].Id;
 
-                Action action = new Action(skill., target);
+
+                
+                Action action = new Action(skill, target);
                 //Convert to model.skill not skill descriptor :/
             }
         }

@@ -105,8 +105,8 @@ namespace Server.Application.Combat
             encounter.joinInteraction = new JoinCombat(encounter);
             mediator.GetHandler<DynamicInteractables>().AddInteractable(roomId, encounter.joinInteraction);
 
+            encounter.nextTurn = DateTime.Now.AddMilliseconds(GameSettings.turnTimeInMs);
             encounter.nextTurnInvocation = dispatcher.InvokeIn(GameSettings.turnTimeInMs, () => NextTurn(encounter));
-
             return encounter;
         }
 
@@ -117,7 +117,7 @@ namespace Server.Application.Combat
             mediator.GetHandler<NewTurnAlerter>().SendToAll(encounter);
 
 
-
+            encounter.nextTurn = DateTime.Now.AddMilliseconds(GameSettings.turnTimeInMs);
             encounter.nextTurnInvocation = dispatcher.InvokeIn(GameSettings.turnTimeInMs, () => NextTurn(encounter));
         }
 

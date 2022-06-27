@@ -25,7 +25,8 @@ namespace Server.Application.Combat
 
             return new CombatEncounterResponse( skills,
                                                 encounter.enemyTeam.Where(e => e.alive).Select(e => e.GetDescriptor()).ToList(),
-                                                encounter.playerTeam.Where(e => e.alive).Select(p => p.GetDescriptor()).ToList());
+                                                encounter.playerTeam.Where(e => e.alive).Select(p => p.GetDescriptor()).ToList(),
+                                                encounter.nextTurn);
         }
     }
 }
