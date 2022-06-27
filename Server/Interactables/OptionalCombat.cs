@@ -1,4 +1,5 @@
 ﻿using Server.Application;
+using Server.Application.Alerts;
 using Server.Application.Character;
 using Server.Application.Combat;
 using Server.Model;
@@ -27,6 +28,7 @@ namespace Server.Interactables
         {
             mediator.GetHandler<CombatManager>().StartEncounter(0, player);
             CombatEncounterResponse response = mediator.GetHandler<GetEncounter>().Get(player.Id);
+            mediator.GetHandler<RoomUpdateAlerter>().Send(player.LocationId);
             return Response.From(response);
         }
     }
