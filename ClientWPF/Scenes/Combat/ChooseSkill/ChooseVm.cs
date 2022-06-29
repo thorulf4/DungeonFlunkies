@@ -58,6 +58,11 @@ namespace ClientWPF.Scenes.Combat
         {
             Timer.StartTurn(0);
 
+            foreach(var skill in Skills)
+            {
+                skill.CurrentCooldown = Math.Max(0, skill.CurrentCooldown - 1);
+            }
+
             var currentPlayer = alert.Allies.First(p => p.Name == player.Name);
             UpdatePlayer(currentPlayer);
         }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Application.Alerts;
+using Server.Application.Combat.AI;
+using Server.Application.Combat.Enemies;
 using Server.Application.Interactables;
 using Server.Interactables;
 using Server.Model;
@@ -59,7 +61,7 @@ namespace Server.Application.Combat
             var target = encounter.entities[targetId];
             var player = (CombatPlayer)encounter.entities.First(e => e is CombatPlayer player && player.playerId == playerId);
 
-            var actualSkill = player.skills.First(s => s.Id == skill.Id);
+            LoadedSkill actualSkill = player.skills.First(s => s.skill.Id == skill.Id);
 
             if (actualSkill.CurrentCooldown > 0)
                 throw new Exception("Trying to use ability that is on cooldown");
@@ -73,11 +75,9 @@ namespace Server.Application.Combat
             if (actualSkill.UsesBonusAction)
                 player.hasBonusAction = false;
 
-            Skill logicalSkill = mediator.GetHandler<GetSkills>().Get(skill);
+            actualSkill.skill.Apply(target);
 
-            logicalSkill.Apply(target);
-
-            actualSkill.Cooldown = actualSkill.CurrentCooldown;
+            actualSkill.CurrentCooldown = actualSkill.Cooldown;
             skill.Cooldown = actualSkill.CurrentCooldown;
 
             CheckEarlyTurnEnd(encounter);
@@ -95,7 +95,7 @@ namespace Server.Application.Combat
 
             List<Enemy> enemies = new List<Enemy>();
             for (int i = 0; i < 3; i++)
-                enemies.Add(new Enemy("Goblin", 100, new List<SkillDescriptor>()));
+                enemies.Add(GoblinFactory.Create());
 
             var encounter = new Encounter(enemies, players.Select(p => new CombatPlayer(mediator, p)).ToList());
             encounters.Add(encounter);
@@ -113,6 +113,12 @@ namespace Server.Application.Combat
         private void NextTurn(Encounter encounter)
         {
             encounter.RefreshActions();
+
+            foreach(CombatEntity entity in encounter.enemyTeam)
+            {
+                AiController.SetNextAction((Enemy)entity, encounter.enemyTeam, encounter.playerTeam);
+            }
+
 
             mediator.GetHandler<NewTurnAlerter>().SendToAll(encounter);
 

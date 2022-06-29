@@ -2,6 +2,7 @@
 using Server.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Server.Application.Combat
@@ -33,12 +34,17 @@ namespace Server.Application.Combat
 
         internal void RefreshActions()
         {
-            foreach(CombatEntity entity in playerTeam)
+            foreach(CombatEntity entity in entities)
             {
                 if(entity is CombatPlayer player)
                 {
                     player.hasAction = true;
                     player.hasBonusAction = true;
+                }
+
+                foreach(LoadedSkill skill in entity.skills)
+                {
+                    skill.CurrentCooldown = Math.Max(0, skill.CurrentCooldown - 1);
                 }
             }
         }
@@ -49,6 +55,12 @@ namespace Server.Application.Combat
             playerTeam.Add(player);
 
             player.Id = entities.IndexOf(player);
+        }
+
+        //Assumes we only have enemy ai in fights
+        public List<Enemy> GetAi()
+        {
+            return enemyTeam.Select(e => (Enemy) e).ToList();
         }
     }
 }

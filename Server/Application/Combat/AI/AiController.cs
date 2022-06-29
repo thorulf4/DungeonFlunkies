@@ -8,7 +8,7 @@ namespace Server.Application.Combat.AI
 {
     public static class AiController
     {
-        public static void SetNextAction(CombatEntity entity, List<CombatEntity> entityAllies , List<CombatEntity> entityEnemies)
+        public static void SetNextAction(Enemy entity, List<CombatEntity> entityAllies , List<CombatEntity> entityEnemies)
         {
             //Consider adding 50% health check before healing
 
@@ -17,16 +17,17 @@ namespace Server.Application.Combat.AI
 
             int skillIndex = random.Next(skills.Length);
 
-            var skill = skills[skillIndex];
+            LoadedSkill skill = skills[skillIndex];
 
-            if(skill is DamageSkill)
+            if (skill.skill is DamageSkill)
             {
                 int target = entityEnemies[random.Next(entityEnemies.Count)].Id;
-
-
                 
-                Action action = new Action(skill, target);
-                //Convert to model.skill not skill descriptor :/
+                entity.plannedAction = new PlannedAction(skill, target);
+            }
+            else
+            {
+                throw new Exception("Enemies only support damage skill atm");
             }
         }
     }

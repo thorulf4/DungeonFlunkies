@@ -1,4 +1,6 @@
-﻿using Shared.Descriptors;
+﻿using Server.Application.Combat.AI;
+using Server.Model.Skills;
+using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +13,7 @@ namespace Server.Application.Combat
         public string name;
         public int health;
         public int maxHealth;
-        public List<SkillDescriptor> skills;
+        public List<LoadedSkill> skills;
 
         public bool alive;
 

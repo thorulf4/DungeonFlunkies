@@ -25,7 +25,7 @@ namespace Server.Application.Combat
             name = player.Name;
             maxHealth = 100;
             health = player.Health;
-            skills = mediator.GetHandler<GetSkills>().GetFromPlayer(player.Id).Select(skill => skill.GetDescriptor(0)).ToList();
+            skills = mediator.GetHandler<GetSkills>().GetLoadedFromPlayer(player.Id);
 
             hasAction = true;
             hasBonusAction = true;

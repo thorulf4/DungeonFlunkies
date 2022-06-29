@@ -23,6 +23,11 @@ namespace Server.Application.Combat
             return context.Equipped.Where(e => e.PlayerId == playerId).Include(e => e.Item).ThenInclude(i => ((Equipment)i).Skills).SelectMany(o => ((Equipment)o.Item).Skills).ToList();
         }
 
+        public List<LoadedSkill> GetLoadedFromPlayer(int playerId)
+        {
+            return context.Equipped.Where(e => e.PlayerId == playerId).Include(e => e.Item).ThenInclude(i => ((Equipment)i).Skills).SelectMany(o => ((Equipment)o.Item).Skills).Select(s => new LoadedSkill(s)).ToList();
+        }
+
         public Skill Get(SkillDescriptor skill)
         {
             return context.Skills.Find(skill.Id);

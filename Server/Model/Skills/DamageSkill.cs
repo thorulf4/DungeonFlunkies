@@ -9,6 +9,19 @@ namespace Server.Model.Skills
     {
         public int Damage { get; set; }
 
+        public DamageSkill()
+        {
+
+        }
+
+        public DamageSkill(string name, int damage)
+        {
+            Damage = damage;
+            Cooldown = 0;
+            UsesAction = true;
+            Name = name;
+        }
+
         public override void Apply(CombatEntity target)
         {
             target.TakeDamage(Damage);

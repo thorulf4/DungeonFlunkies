@@ -23,7 +23,7 @@ namespace Server.Application.Combat
             var encounter = mediator.GetHandler<CombatManager>().GetEncounter(playerId);
             var skills = encounter.playerTeam.First(p => p is CombatPlayer player && player.playerId == playerId).skills;
 
-            return new CombatEncounterResponse( skills,
+            return new CombatEncounterResponse( skills.Select(s => s.GetDescriptor()).ToList(),
                                                 encounter.enemyTeam.Where(e => e.alive).Select(e => e.GetDescriptor()).ToList(),
                                                 encounter.playerTeam.Where(e => e.alive).Select(p => p.GetDescriptor()).ToList(),
                                                 encounter.nextTurn);
