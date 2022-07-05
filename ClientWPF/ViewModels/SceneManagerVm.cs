@@ -30,39 +30,33 @@ namespace ClientWPF.ViewModels
             return provider.GetRequiredService<TScene>();
         }
 
-        public void SetScene(Scene scene, bool forceful = true)
+        public void SetScene(Scene newScene, bool forceful = true)
         {
             if (forceful)
-                scenes = new Stack<Scene>();
+            {
+                foreach (Scene scene in scenes)
+                    scene.Unload();
+
+                scenes.Clear();
+            }
             else
+            {
+                CurrentScene.Unload();
                 scenes.Pop();
+            }
 
-            CurrentScene.Unload();
-            CurrentScene = scene;
+            CurrentScene = newScene;
 
-            scenes.Push(scene);
+            scenes.Push(newScene);
 
             Notify("CurrentScene");
         }
 
         public void SetScene<TScene>(bool forceful = true) where TScene : Scene
         {
-            if (forceful)
-            {
-                foreach (Scene scene in scenes)
-                    scene.Unload();
-            }
-            else
-            {
-                scenes.Pop();
-                CurrentScene.Unload();
-            }
+            Scene newScene = CreateScene<TScene>();
 
-            CurrentScene = CreateScene<TScene>();
-
-            scenes.Push(CurrentScene);
-
-            Notify("CurrentScene");
+            SetScene(newScene, forceful);
         }
 
         public void LookupScene(Response response)

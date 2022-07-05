@@ -1,4 +1,5 @@
-﻿using Server.Interactables;
+﻿using Server.Application.Combat.AI;
+using Server.Interactables;
 using Server.Model;
 using System;
 using System.Collections.Generic;
@@ -57,10 +58,18 @@ namespace Server.Application.Combat
             player.Id = entities.IndexOf(player);
         }
 
-        //Assumes we only have enemy ai in fights
-        public List<Enemy> GetAi()
+        public void GenerateAiActions()
         {
-            return enemyTeam.Select(e => (Enemy) e).ToList();
+            foreach (Enemy entity in GetAliveAi())
+            {
+                AiController.SetNextAction(entity, enemyTeam, playerTeam);
+            }
+        }
+
+        //Assumes we only have enemy ai in fights
+        public List<Enemy> GetAliveAi()
+        {
+            return enemyTeam.Where(e => e.alive).Select(e => (Enemy) e).ToList();
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Server.Application.Combat.AI
 
             if (skill.skill is DamageSkill)
             {
-                int target = entityEnemies[random.Next(entityEnemies.Count)].Id;
+                CombatEntity target = entityEnemies[random.Next(entityEnemies.Count)];
                 
                 entity.plannedAction = new PlannedAction(skill, target);
             }

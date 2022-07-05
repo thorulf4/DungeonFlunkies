@@ -107,21 +107,25 @@ namespace Server.Application.Combat
 
             encounter.nextTurn = DateTime.Now.AddMilliseconds(GameSettings.turnTimeInMs);
             encounter.nextTurnInvocation = dispatcher.InvokeIn(GameSettings.turnTimeInMs, () => NextTurn(encounter));
+
+            //Consider making the first turn a free turn where no one can do anything
+            encounter.GenerateAiActions();
+            
             return encounter;
         }
 
         private void NextTurn(Encounter encounter)
         {
-            encounter.RefreshActions();
-
-            foreach(CombatEntity entity in encounter.enemyTeam)
+            foreach(Enemy enemy in encounter.GetAliveAi())
             {
-                AiController.SetNextAction((Enemy)entity, encounter.enemyTeam, encounter.playerTeam);
+                enemy.plannedAction.Apply();
             }
 
+            encounter.RefreshActions();
+
+            encounter.GenerateAiActions();
 
             mediator.GetHandler<NewTurnAlerter>().SendToAll(encounter);
-
 
             encounter.nextTurn = DateTime.Now.AddMilliseconds(GameSettings.turnTimeInMs);
             encounter.nextTurnInvocation = dispatcher.InvokeIn(GameSettings.turnTimeInMs, () => NextTurn(encounter));

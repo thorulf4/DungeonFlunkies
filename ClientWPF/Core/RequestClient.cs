@@ -90,14 +90,17 @@ namespace ClientWPF
                         if (!callbacks.ContainsKey(type))
                             continue;
 
+
+                        List<Action<object>> calls = new();
                         lock (callbacks)
                         {
                             foreach (var x in callbacks[type].Values)
                             {
-                                foreach (var callback in x)
-                                    dispatcher.Invoke(() => callback(data));
+                                calls.AddRange(x);
                             }
                         }
+                        foreach (var callback in calls)
+                            dispatcher.Invoke(() => callback(data));
                     }
                     else
                     {

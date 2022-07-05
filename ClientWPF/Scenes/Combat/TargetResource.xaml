@@ -10,6 +10,9 @@
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
                             <Label Content="{Binding Name}"/>
                             <ProgressBar Height="10px" Maximum="{Binding MaxHealth}" Value="{Binding Health}"></ProgressBar>
+                            <Border>
+                                <Label Content="{Binding Action}"/>
+                            </Border>
                         </StackPanel>
                     </Button>
                 </DataTemplate>

@@ -37,7 +37,15 @@ namespace Server.Application.Combat
         {
             base.TakeDamage(damage);
 
-            mediator.GetHandler<PlayerStats>().DecreaseHealth(playerId, damage);
+            //Save health between fights????
+            //mediator.GetHandler<PlayerStats>().DecreaseHealth(playerId, damage);
+        }
+
+        public override void Die()
+        {
+            base.Die();
+
+            mediator.GetHandler<KillCharacter>().Kill(playerId);
         }
     }
 }

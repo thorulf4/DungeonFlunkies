@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Shared.Alerts
 {
-    public class Alert
+    public abstract class Alert
     {
     }
 }

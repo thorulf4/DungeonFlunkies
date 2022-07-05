@@ -59,6 +59,18 @@ namespace Server
             }
         }
 
+        public void SendAlert<T>(T alert, string receiver) where T : Alert
+        {
+            if (users.Values.Contains(receiver))
+            {
+                lock (alerts)
+                {
+                    List<string> receivers = new() { receiver };
+                    alerts.Add(new AlertBroadcast(receivers, alert));
+                }
+            }
+        }
+
         private void RegisterRequest<TR, TH>()
         {
             registeredRequests.Add(typeof(TR), typeof(TH));

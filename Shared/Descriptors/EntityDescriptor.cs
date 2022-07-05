@@ -10,6 +10,7 @@ namespace Shared.Descriptors
         public string Name { get; set; }
         public int Health { get; set; }
         public int MaxHealth { get; set; }
+        public string Action { get; set; }
 
         public bool HasAction { get; set; }
         public bool HasBonusAction { get; set; }

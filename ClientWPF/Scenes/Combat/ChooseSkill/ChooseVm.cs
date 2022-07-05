@@ -56,6 +56,7 @@ namespace ClientWPF.Scenes.Combat
 
         private void NewTurn(NewTurnAlert alert)
         {
+            UpdateEncounter(alert.Enemies, alert.Allies);
             Timer.StartTurn(0);
 
             foreach(var skill in Skills)
@@ -95,7 +96,8 @@ namespace ClientWPF.Scenes.Combat
                 Health = e.Health,
                 MaxHealth = e.MaxHealth,
                 Name = e.Name,
-                Id = e.Id
+                Id = e.Id,
+                Action = e.Action,
             }).ToList());
 
             Allies = new TargetList();
@@ -104,7 +106,7 @@ namespace ClientWPF.Scenes.Combat
                 Health = e.Health,
                 MaxHealth = e.MaxHealth,
                 Name = e.Name,
-                Id = e.Id
+                Id = e.Id,
             }).ToList());
 
             Notify("Enemies");

@@ -41,6 +41,11 @@ namespace Server
             throw new Exception("Session not valid");
         }
 
+        public void CloseSession(string playerName)
+        {
+            sessions.Remove(playerName);
+        }
+
         private string CreateSessionHash(string name, DateTime expiryTime)
         {
             byte[] data = Encoding.ASCII.GetBytes(name + expiryTime.ToString());

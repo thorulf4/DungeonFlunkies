@@ -9,12 +9,22 @@ namespace Server.Application.Combat.AI
     public class PlannedAction
     {
         public LoadedSkill skill;
-        public int targetId;
+        public CombatEntity target;
 
-        public PlannedAction(LoadedSkill skill, int targetId)
+        public PlannedAction(LoadedSkill skill, CombatEntity target)
         {
             this.skill = skill;
-            this.targetId = targetId;
+            this.target = target;
+        }
+
+        public override string ToString()
+        {
+            return $"{skill.Name} -> {target.name}";
+        }
+
+        internal void Apply()
+        {
+            skill.Apply(target);
         }
     }
 }

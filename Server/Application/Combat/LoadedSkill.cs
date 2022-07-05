@@ -23,10 +23,22 @@ namespace Server.Application.Combat
         public string Name => skill.Name;
         public string Description => skill.Description;
         public int Cooldown => skill.Cooldown;
+
+
+
         public bool UsesAction => skill.UsesAction;
         public bool UsesBonusAction => skill.UsesBonusAction;
 
         public bool OnCooldown => CurrentCooldown > 0;
+
+        internal void Apply(CombatEntity target)
+        {
+            if (OnCooldown)
+                throw new Exception("Cannot use ability thats on cooldown");
+
+            skill.Apply(target);
+            CurrentCooldown = Cooldown;
+        }
 
         public SkillDescriptor GetDescriptor()
         {

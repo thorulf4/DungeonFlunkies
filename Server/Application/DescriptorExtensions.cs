@@ -33,13 +33,19 @@ namespace Server.Application
                 Id = entity.Id,
                 Health = entity.health,
                 MaxHealth = entity.maxHealth,
-                Name = entity.name
+                Name = entity.name,
+                Action = null
             };
+
 
             if (entity is CombatPlayer player)
             {
                 descriptor.HasAction = player.hasAction;
                 descriptor.HasBonusAction = player.hasBonusAction;
+            }
+            else if(entity is Enemy enemy)
+            {
+                descriptor.Action = enemy.plannedAction.ToString();
             }
 
             return descriptor;
