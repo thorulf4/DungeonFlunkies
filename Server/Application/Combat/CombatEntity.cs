@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Server.Application.Combat
 {
-    public abstract class CombatEntity
+    public abstract class CombatEntity : IDescriptable<EntityDescriptor>
     {
         public int Id { get; set; }
         public string name;
@@ -31,6 +31,31 @@ namespace Server.Application.Combat
         public virtual void Die()
         {
             alive = false;
+        }
+
+        public EntityDescriptor GetDescriptor()
+        {
+            var descriptor = new EntityDescriptor()
+            {
+                Id = Id,
+                Health = health,
+                MaxHealth = maxHealth,
+                Name = name,
+                Action = null
+            };
+
+
+            if (this is CombatPlayer player)
+            {
+                descriptor.HasAction = player.hasAction;
+                descriptor.HasBonusAction = player.hasBonusAction;
+            }
+            else if (this is Enemy enemy)
+            {
+                descriptor.Action = enemy.plannedAction.ToString();
+            }
+
+            return descriptor;
         }
     }
 }

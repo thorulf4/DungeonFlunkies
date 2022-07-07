@@ -8,7 +8,7 @@ namespace Server.Application.Combat.AI
 {
     public static class AiController
     {
-        public static void SetNextAction(Enemy entity, List<CombatEntity> entityAllies , List<CombatEntity> entityEnemies)
+        public static void SetNextAction(Enemy entity, List<Enemy> entityAllies , List<CombatPlayer> players)
         {
             //Consider adding 50% health check before healing
 
@@ -21,7 +21,7 @@ namespace Server.Application.Combat.AI
 
             if (skill.skill is DamageSkill)
             {
-                CombatEntity target = entityEnemies[random.Next(entityEnemies.Count)];
+                CombatEntity target = players[random.Next(players.Count)];
                 
                 entity.plannedAction = new PlannedAction(skill, target);
             }

@@ -9,7 +9,7 @@ namespace Server.Application.Interactables
 {
     public class DynamicInteractables : IApplicationLogic
     {
-        private static Dictionary<int, List<WeakReference<DynamicInteractable>>> interactables = new Dictionary<int, List<WeakReference<DynamicInteractable>>>();
+        private static Dictionary<int, List<DynamicInteractable>> interactables = new ();
         int nextAvailableId = 0;
 
         public void AddInteractable(int roomId, DynamicInteractable interactable)
@@ -17,12 +17,15 @@ namespace Server.Application.Interactables
             interactable.Id = nextAvailableId;
             nextAvailableId = nextAvailableId + 1 % (int.MaxValue - 1);
 
-            var reference = new WeakReference<DynamicInteractable>(interactable);
-
             if (!interactables.ContainsKey(roomId))
-                interactables.Add(roomId, new List<WeakReference<DynamicInteractable>>());
+                interactables.Add(roomId, new());
 
-            interactables[roomId].Add(reference);
+            interactables[roomId].Add(interactable);
+        }
+        
+        public void Remove(int roomId, DynamicInteractable interactable)
+        {
+            interactables[roomId].Remove(interactable);
         }
 
         public List<DynamicInteractable> GetForRoom(int roomId)
@@ -30,22 +33,8 @@ namespace Server.Application.Interactables
             if (!interactables.ContainsKey(roomId))
                 return new List<DynamicInteractable>();
 
-            List<DynamicInteractable> output = new List<DynamicInteractable>();
-            for(int i = interactables[roomId].Count -1; i>=0; i--)
-            {
-                WeakReference<DynamicInteractable> element = interactables[roomId][i];
-
-                if(element.TryGetTarget(out DynamicInteractable interactable))
-                {
-                    output.Add(interactable);
-                }
-                else
-                {
-                    interactables[roomId].RemoveAt(i);
-                }
-            }
-
-            return output;
+            //Copy to limit race condition window
+            return interactables[roomId].ToList();
         }
     }
 }

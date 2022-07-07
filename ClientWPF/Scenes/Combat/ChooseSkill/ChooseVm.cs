@@ -7,9 +7,11 @@ using Shared.Requests.Combat;
 using Shared.Responses;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace ClientWPF.Scenes.Combat
@@ -42,12 +44,23 @@ namespace ClientWPF.Scenes.Combat
 
             client.SubscribeTo<NewTurnAlert>(this, NewTurn);
             client.SubscribeTo<CombatUpdateAlert>(this, CombatUpdate);
+            client.SubscribeTo<WonCombatAlert>(this, WonCombat);
 
             GetEncounter();
         }
 
+        bool hasWon = false;
+        private void WonCombat(WonCombatAlert alert)
+        {
+            hasWon = true;
+
+            sceneManager.PopWithChildren(this);
+            MessageBox.Show("You won the fight");
+        }
+
         private void CombatUpdate(CombatUpdateAlert alert)
         {
+            Debug.Assert(!hasWon);
             UpdateEncounter(alert.Enemies, alert.Allies);
 
             var currentPlayer = alert.Allies.First(p => p.Name == player.Name);
@@ -56,6 +69,7 @@ namespace ClientWPF.Scenes.Combat
 
         private void NewTurn(NewTurnAlert alert)
         {
+            Debug.Assert(!hasWon);
             UpdateEncounter(alert.Enemies, alert.Allies);
             Timer.StartTurn(0);
 
@@ -70,15 +84,19 @@ namespace ClientWPF.Scenes.Combat
 
         private async void GetEncounter()
         {
+            Debug.Assert(!hasWon);
             Response result = await client.SendRequest(new GetEncounterRequest(), player);
 
             if (result.Success && result.data is CombatEncounterResponse response)
             {
-                Skills = response.Skills.AsReadOnly();
-                Timer.SetEndTime(response.TurnEnds);
-                UpdateEncounter(response.Enemies, response.Allies);
+                if (!response.HasEncounter)
+                    return;
 
-                var currentPlayer = response.Allies.First(p => p.Name == player.Name);
+                Skills = response.Skills.AsReadOnly();
+                Timer.SetEndTime(response.Encounter.TurnEnds);
+                UpdateEncounter(response.Encounter.Enemies, response.Encounter.Allies);
+
+                var currentPlayer = response.Encounter.Allies.First(p => p.Name == player.Name);
                 UpdatePlayer(currentPlayer);
             }
             else
@@ -89,7 +107,8 @@ namespace ClientWPF.Scenes.Combat
 
         private void UpdateEncounter(List<EntityDescriptor> enemies, List<EntityDescriptor> allies)
         {
-            
+            Debug.Assert(!hasWon);
+
             Enemies = new TargetList();
             Enemies.AddRange(enemies.Select(e => new Target()
             {
@@ -116,6 +135,7 @@ namespace ClientWPF.Scenes.Combat
 
         private void UpdatePlayer(EntityDescriptor currentPlayer)
         {
+            Debug.Assert(!hasWon);
             HasAction = currentPlayer.HasAction;
             HasBonusAction = currentPlayer.HasBonusAction;
 

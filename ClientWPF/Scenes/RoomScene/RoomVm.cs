@@ -33,6 +33,11 @@ namespace ClientWPF.Scenes.RoomScene
             UpdateRoom();
         }
 
+        public override void Refresh()
+        {
+            UpdateRoom();
+        }
+
         private async void UpdateRoom()
         {
             var result = await client.SendRequest(new GetRoomRequest(), player);

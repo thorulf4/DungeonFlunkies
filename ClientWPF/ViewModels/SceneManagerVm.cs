@@ -85,29 +85,45 @@ namespace ClientWPF.ViewModels
 
         public void PopScene()
         {
-            scenes.Pop();
-            CurrentScene.Unload();
-            CurrentScene = scenes.Peek();
+            Pop();
+            CurrentScene.Refresh();
             Notify("CurrentScene");
         }
 
-        public void PushScene<T>(T scene) where T : Scene
+        private void Pop()
+        {
+            scenes.Pop();
+            CurrentScene.Unload();
+            CurrentScene = scenes.Peek();
+        }
+
+        public void PopWithChildren(Scene scene)
+        {
+            while(CurrentScene != scene)
+                Pop();
+
+            //After popping children also pop scene
+            PopScene();
+        }
+
+        public void PushScene(Scene scene)
         {
             scenes.Push(scene);
             CurrentScene = scene;
+            CurrentScene.Refresh();
             Notify("CurrentScene");
         }
 
         public T PushScene<T>() where T : Scene
         {
-            var scene = provider.GetRequiredService<T>();
+            var scene = CreateScene<T>();
             scenes.Push(scene);
             CurrentScene = scene;
             Notify("CurrentScene");
             return scene;
         }
 
-        public bool StackContains<T>(T scene) where T : Scene
+        public bool StackContains(Scene scene)
         {
             return scenes.Contains(scene);
         }

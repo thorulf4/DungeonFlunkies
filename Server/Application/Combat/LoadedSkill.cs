@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Server.Application.Combat
 {
-    public class LoadedSkill
+    public class LoadedSkill : IDescriptable<SkillDescriptor>
     {
         public int CurrentCooldown { get; set; }
         public Skill skill;

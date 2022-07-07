@@ -8,5 +8,9 @@ namespace ClientWPF.Scenes
     public abstract class Scene : ViewModel
     {
         public abstract void Unload();
+        public virtual void Refresh()
+        {
+
+        }
     }
 }

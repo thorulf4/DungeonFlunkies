@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Application.Alerts;
+using Server.Application.Character;
 using Server.Application.Combat.AI;
 using Server.Application.Combat.Enemies;
 using Server.Application.Interactables;
@@ -7,6 +8,7 @@ using Server.Interactables;
 using Server.Model;
 using Server.Model.Skills;
 using Shared;
+using Shared.Alerts.Combat;
 using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
@@ -25,20 +27,22 @@ namespace Server.Application.Combat
         private readonly GameDb context;
         private readonly Mediator mediator;
         private readonly DispatcherService dispatcher;
+        private readonly IAlerter alerter;
 
         private readonly List<Encounter> encounters = new List<Encounter>();
         private readonly Dictionary<int, Encounter> encounterIndex = new Dictionary<int, Encounter>();
 
-        public CombatManager(GameDb context, Mediator mediator, DispatcherService dispatcher)
+        public CombatManager(GameDb context, Mediator mediator, DispatcherService dispatcher, IAlerter alerter)
         {
             this.context = context;
             this.mediator = mediator;
             this.dispatcher = dispatcher;
+            this.alerter = alerter;
         }
 
         public Encounter GetEncounter(int playerId)
         {
-            return encounters.First(e => e.entities.Any(p => p is CombatPlayer player && player.playerId == playerId));
+            return encounters.FirstOrDefault(e => e.entities.Any(p => p is CombatPlayer player && player.playerId == playerId));
         }
 
         public List<Encounter> GetEncountersInRoom(int roomId)
@@ -80,11 +84,35 @@ namespace Server.Application.Combat
             actualSkill.CurrentCooldown = actualSkill.Cooldown;
             skill.Cooldown = actualSkill.CurrentCooldown;
 
-            CheckEarlyTurnEnd(encounter);
-
-            mediator.GetHandler<CombatUpdateAlerter>().SendToAll(encounter);
+            if (encounter.AllEnemiesDead())
+            {
+                WinEncounter(encounter);
+            }
+            else
+            {
+                CheckEarlyTurnEnd(encounter);
+                mediator.GetHandler<CombatUpdateAlerter>().SendToAll(encounter);
+            }
 
             return context;
+        }
+
+        public void WinEncounter(Encounter encounter)
+        {
+            mediator.GetHandler<PlayerStats>().HealPlayers(encounter.playerTeam.Select(p => p.playerId));
+            EndEncounter(encounter);
+        }
+
+        public void EndEncounter(Encounter encounter)
+        {
+            encounters.Remove(encounter);
+            foreach(var player in encounter.playerTeam)
+            {
+                encounterIndex.Remove(player.playerId);
+            }
+            var alivePlayerNames = encounter.playerTeam.Where(p => p.alive).Select(p => p.name).ToList();
+            mediator.GetHandler<DynamicInteractables>().Remove(encounter.roomId, encounter.joinInteraction);
+            alerter.SendAlerts(new WonCombatAlert(), alivePlayerNames);
         }
 
         public Encounter StartEncounter(int challengeRating, params Player[] players)
@@ -97,7 +125,7 @@ namespace Server.Application.Combat
             for (int i = 0; i < 3; i++)
                 enemies.Add(GoblinFactory.Create());
 
-            var encounter = new Encounter(enemies, players.Select(p => new CombatPlayer(mediator, p)).ToList());
+            var encounter = new Encounter(roomId, enemies, players.Select(p => new CombatPlayer(mediator, p)).ToList());
             encounters.Add(encounter);
             foreach (var player in players)
                 encounterIndex.Add(player.Id, encounter);
@@ -133,7 +161,7 @@ namespace Server.Application.Combat
 
         public void EndTurn(int playerId)
         {
-            var player = (CombatPlayer) encounterIndex[playerId].playerTeam.First(p => p is CombatPlayer player && player.playerId == playerId);
+            var player = encounterIndex[playerId].playerTeam.First(p => p is CombatPlayer player && player.playerId == playerId);
 
             player.hasAction = false;
             player.hasBonusAction = false;

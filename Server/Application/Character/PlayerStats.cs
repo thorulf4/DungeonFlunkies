@@ -24,5 +24,15 @@ namespace Server.Application.Character
 
             return context;
         }
+
+        public void HealPlayers(IEnumerable<int> playerIds)
+        {
+            foreach(int playerId in playerIds)
+            {
+                var player = context.Players.Find(playerId);
+                player.Health = 100;
+            }
+            context.SaveChanges();
+        }
     }
 }
