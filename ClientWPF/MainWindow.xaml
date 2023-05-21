@@ -38,7 +38,7 @@
                     <Button DockPanel.Dock="Right" Command="{Binding SendMessage}">
                         Send
                     </Button>
-                    <TextBox Text="{Binding MessageInput, FallbackValue='Say something' }">
+                    <TextBox Text="{Binding MessageInput, UpdateSourceTrigger=PropertyChanged }">
                         <b:Interaction.Triggers>
                             <b:EventTrigger EventName="KeyDown">
                                 <b:InvokeCommandAction Command="{Binding KeyDown}" PassEventArgsToCommand="True"/>
