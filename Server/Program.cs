@@ -89,7 +89,7 @@ namespace Server
                 services.AddSingleton<Authenticator>();
                 services.AddSingleton<IAlerter>(listener);
                 services.AddSingleton<Mediator>();
-                services.AddSingleton<DispatcherService>(new DispatcherService());
+                services.AddSingleton(new DispatcherService());
             });
             configure.AddMiddleware(new Debugger());
             configure.AddInteractionHandler<InteractionHandler>();

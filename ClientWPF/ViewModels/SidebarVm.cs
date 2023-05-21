@@ -56,16 +56,5 @@ namespace ClientWPF.ViewModels
                 });
             }
         }
-
-        public RelayCommand TempCombat
-        {
-            get
-            {
-                return new RelayCommand(o =>
-                {
-                    sceneManager.PushScene<ChooseVm>();
-                });
-            }
-        }
     }
 }

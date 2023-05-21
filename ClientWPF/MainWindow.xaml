@@ -59,7 +59,6 @@
             </Grid.RowDefinitions>
             <DockPanel DataContext="{Binding Sidebar, Mode=OneWay, Source={StaticResource locator}}">
                 <StackPanel DockPanel.Dock="Bottom">
-                    <Button Command="{Binding TempCombat}" Margin="1">TempCombat</Button>
                     <Button Command="{Binding Inventory}" Margin="1">Inventory</Button>
                     <Button Command="{Binding Logout}"  Margin="1">Log out</Button>
                 </StackPanel>
