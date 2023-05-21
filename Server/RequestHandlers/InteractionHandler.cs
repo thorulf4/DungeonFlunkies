@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Application;
+using Server.Application.Alerts;
 using Server.Application.Character;
 using Server.Application.Interactables;
 using Server.Model;
@@ -26,6 +27,7 @@ namespace Server.RequestHandlers
             this.authenticator = authenticator;
         }
 
+
         public override Response Handle(InteractionRequest request)
         {
             int playerid = authenticator.VerifySession(request.Name, request.SessionId);
@@ -34,7 +36,7 @@ namespace Server.RequestHandlers
             IInteractable interactable;
             if (request.Interaction is DynamicInteractionDescriptor)
             {
-                interactable = mediator.GetHandler<DynamicInteractables>().GetForRoom(player.LocationId).First(i => i.Id == request.Interaction.Id);
+                interactable = mediator.GetHandler<DynamicInteractables>().GetForRoom(player.LocationId).FirstOrDefault(i => i.Id == request.Interaction.Id);
             }
             else
             {
@@ -42,10 +44,16 @@ namespace Server.RequestHandlers
 
             }
 
-            Response result = interactable.Interact(player, context, mediator);
-            context.SaveChanges();
-
-            return result;
+            if(interactable != null)
+            {
+                Response result = interactable.Interact(player, context, mediator);
+                context.SaveChanges();
+                return result;
+            }
+            else
+            {
+                return Response.Fail("No such interactable exists");
+            }
         }
     }
 }
