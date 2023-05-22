@@ -26,6 +26,8 @@ namespace Server
     {
         public static int startingRoomId;
         public static int testSwordId;
+        public static int testDaggerId;
+        public static int testShieldId;
 
         static void Main(string[] args)
         {
@@ -43,16 +45,24 @@ namespace Server
                 if (context.Items.Count() == 0)
                 {
                     Equipment sword = new Equipment { BaseValue = 1, Name = "Sword", Type = EquipmentType.Holdable, EquipmentTemplate="Sword", ItemPower=65 };
+                    Equipment dagger = new Equipment { BaseValue = 1, Name = "Dagger", Type = EquipmentType.Holdable, EquipmentTemplate = "Dagger", ItemPower = 65 };
+                    Equipment shield = new Equipment { BaseValue = 1, Name = "Shield", Type = EquipmentType.Holdable, EquipmentTemplate = "Shield", ItemPower = 65 };
                     context.Add(sword);
+                    context.Add(dagger);
+                    context.Add(shield);
                     context.SaveChanges();
 
                     startingRoomId = 0;
                     testSwordId = sword.Id;
+                    testDaggerId = dagger.Id;
+                    testShieldId = shield.Id;
                 }
                 else
                 {
                     startingRoomId = 0;
                     testSwordId = 1;
+                    testDaggerId = 2;
+                    testShieldId = 3;
                 }
             }
 

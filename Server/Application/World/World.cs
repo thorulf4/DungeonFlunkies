@@ -26,8 +26,9 @@ namespace Server.Application.GameWorld
             room2.Create(new Path(room1));
             room1.Create(new OptionalCombat());
             var loot = room2.Create(new Loot());
-            var item = mediator.GetHandler<GetItem>().GetDescriptor(Program.testSwordId, 5);
-            loot.AddItem(item);
+            loot.AddItem(mediator.GetHandler<GetItem>().GetDescriptor(Program.testSwordId, 5));
+            loot.AddItem(mediator.GetHandler<GetItem>().GetDescriptor(Program.testDaggerId, 5));
+            loot.AddItem(mediator.GetHandler<GetItem>().GetDescriptor(Program.testShieldId, 5));
 
             rooms.Add(0, room1);
             rooms.Add(1, room2);

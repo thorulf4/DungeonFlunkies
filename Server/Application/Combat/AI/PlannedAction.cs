@@ -21,7 +21,7 @@ namespace Server.Application.Combat.AI
             return $"{skill.Name} -> {target.name}";
         }
 
-        internal void Apply()
+        public void Apply()
         {
             skill.Apply(target);
         }

@@ -23,9 +23,26 @@ namespace Server.Application.Combat.Skills
             AddItemTemplate("Sword", new List<Skill>()
             {
                 new DamageSkill("Swing", 1),
-                new DamageSkill("Stab", 1.25f)
+                new DamageSkill("Heavy strike", 1.25f)
                 {
                     Cooldown = 2
+                }
+            });
+            AddItemTemplate("Dagger", new List<Skill>()
+            {
+                new DamageSkill("Quick strike", 0.50f)
+                {
+                    UsesAction=false,
+                    UsesBonusAction=true
+                }
+            });
+            AddItemTemplate("Shield", new List<Skill>()
+            {
+                new StunSkill("Shield bash", 1, 0.25f)
+                {
+                    UsesAction=false,
+                    UsesBonusAction=true,
+                    Cooldown = 3
                 }
             });
         }

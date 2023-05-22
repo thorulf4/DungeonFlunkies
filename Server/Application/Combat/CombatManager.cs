@@ -1,5 +1,6 @@
 ﻿using Server.Application.Alerts;
 using Server.Application.Character;
+using Server.Application.Combat.Effects;
 using Server.Application.Combat.Enemies;
 using Server.Application.GameWorld;
 using Server.Interactables;
@@ -134,6 +135,7 @@ namespace Server.Application.Combat
 
             //Consider making the first turn a free turn where no one can do anything
             encounter.GenerateAiActions();
+            HandleEffects(encounter);
             
             return encounter;
         }
@@ -142,12 +144,13 @@ namespace Server.Application.Combat
         {
             foreach(Enemy enemy in encounter.GetAliveAi())
             {
-                enemy.plannedAction.Apply();
+                enemy.plannedAction?.Apply();
             }
 
             encounter.RefreshActions();
 
             encounter.GenerateAiActions();
+            HandleEffects(encounter);
 
             mediator.GetHandler<NewTurnAlerter>().SendToAll(encounter);
 
@@ -173,6 +176,14 @@ namespace Server.Application.Combat
             {
                 encounter.nextTurnInvocation.Cancel();
                 NextTurn(encounter);
+            }
+        }
+
+        private void HandleEffects(Encounter encounter)
+        {
+            foreach (CombatEntity entity in encounter.entities)
+            {
+                entity.HandleEffects();
             }
         }
     }

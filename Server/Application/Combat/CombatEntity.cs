@@ -1,4 +1,5 @@
 ﻿using Server.Application.Combat.AI;
+using Server.Application.Combat.Effects;
 using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace Server.Application.Combat
         public int health;
         public int maxHealth;
         public List<LoadedSkill> skills;
+        public List<Effect> activeEffects = new();
 
         public bool alive;
 
@@ -51,10 +53,33 @@ namespace Server.Application.Combat
             }
             else if (this is Enemy enemy)
             {
-                descriptor.Action = enemy.plannedAction.ToString();
+                descriptor.Action = enemy.plannedAction?.ToString()?? "Stunned";
             }
 
             return descriptor;
+        }
+
+        public void AddEffect(Effect effect)
+        {
+            activeEffects.Add(effect);
+        }
+
+        public void HandleEffects()
+        {
+            for(int i = activeEffects.Count - 1; i >= 0; i--)
+            {
+                Effect effect = activeEffects[i];
+
+                if(effect.TurnsLeft > 0)
+                {
+                    effect.Tick(this);
+                    effect.TurnsLeft--;
+                }
+                else
+                {
+                    activeEffects.RemoveAt(i);
+                }
+            }
         }
     }
 }
