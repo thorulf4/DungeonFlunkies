@@ -19,7 +19,7 @@ namespace Server.Application.Character
         {
             var player = new Player(name, secret)
             {
-                Location = context.Rooms.Find(Program.startingRoomId)
+                LocationId = Program.startingRoomId
             };
 
             context.Players.Add(player);

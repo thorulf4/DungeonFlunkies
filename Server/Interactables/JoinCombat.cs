@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Server.Interactables
 {
-    public class JoinCombat : DynamicInteractable
+    public class JoinCombat : Interactable
     {
         public Encounter encounter;
 

@@ -1,4 +1,5 @@
 ﻿using Server.Application.Character;
+using Server.Application.GameWorld;
 using Shared.Alerts;
 using Shared.Responses;
 using System;
@@ -24,7 +25,7 @@ namespace Server.Application.Alerts
         public void Send(int roomId)
         {
             var players = mediator.GetHandler<GetPlayer>().GetInRoom(roomId).Select(p=>p.Name).ToArray();
-            var interactables = mediator.GetHandler<GetInteractable>().GetInRoom(roomId).Select(i => i.GetDescriptor(context)).ToArray();
+            var interactables = mediator.GetHandler<World>().GetRoom(roomId).GetDescriptors(context);
 
             alerter.SendAlerts(new RoomAlert { PeopleInRoom = players, Interactions = interactables }, players);
         }

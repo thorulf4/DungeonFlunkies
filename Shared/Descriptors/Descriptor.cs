@@ -1,11 +1,12 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Shared.Descriptors
 {
     //[JsonConverter(typeof(JsonSubtypes))]
     //[JsonSubtypes.KnownSubTypeWithProperty(typeof(Shared.EquipmentDescriptor), "Slot")]
     //[JsonSubtypes.FallBackSubType(typeof(Shared.ItemDescriptor))]
-    public class Descriptor
+    public abstract class Descriptor
     {
         public int ItemId { get; set; }
 
@@ -27,6 +28,11 @@ namespace Shared.Descriptors
         public override string ToString()
         {
             return $"{Count}X\t{ItemId}: {Name}";
+        }
+
+        public Descriptor Clone()
+        {
+            return (Descriptor) MemberwiseClone(); // Shallow copy
         }
     }
 }

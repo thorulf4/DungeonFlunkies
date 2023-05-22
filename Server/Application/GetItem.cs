@@ -1,13 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Server.Application.Interactables;
+﻿using Server.Application.GameWorld;
 using Server.Interactables;
-using Server.Model;
 using Server.Model.Items;
 using Shared.Descriptors;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Server.Application
 {
@@ -24,16 +20,29 @@ namespace Server.Application
 
         public List<Descriptor> GetDroppedItems(int roomId)
         {
-            Loot loot = mediator.GetHandler<GetInteractable>().GetInRoom<Loot>(roomId);
+            Loot loot = mediator.GetHandler<World>().GetRoom(roomId).Get<Loot>();
             if (loot == null)
                 return new List<Descriptor>();
 
-            return mediator.GetHandler<LootInteractable>().GetItemDescriptors(loot);
+            return loot.GetItems().ToList();
         }
 
         public Item Get(int itemId)
         {
             return context.Items.Find(itemId);
+        }
+
+        public Descriptor GetDescriptor(int itemId, int count = 1)
+        {
+            Item item = Get(itemId);
+            if (item is Equipment eq)
+            {
+                return new EquipmentDescriptor(itemId, eq.Name, count, eq.Type);
+            }
+            else
+            {
+                return new ItemDescriptor(itemId, item.Name, count);
+            }
         }
 
     }

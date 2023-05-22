@@ -3,15 +3,11 @@ using Shared;
 using Shared.Requests.Character;
 using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 using Server.Interactables;
-using Server.Model;
-using Shared.Alerts;
 using Server.Application;
 using Server.Application.Character;
-using Server.Application.Interactables;
 using Server.Application.Alerts;
+using Server.Application.GameWorld;
 
 namespace Server.RequestHandlers.Character
 {
@@ -38,12 +34,11 @@ namespace Server.RequestHandlers.Character
             bool hasItems = mediator.GetHandler<PlayerInventory>().PlayerHasItems(request.DroppedItems, playerId);
             if (!hasItems)
                 return Response.Fail("Couldnt drop items");
+             
+            Loot loot = mediator.GetHandler<World>().GetRoom(player).GetOrCreate(new Loot());
 
-
-            Loot loot = mediator.GetHandler<GetInteractable>().GetOrCreate(player.LocationId, new Loot { RoomId = player.LocationId });
-
-            mediator.GetHandler<PlayerInventory>().RemoveItems(playerId, request.DroppedItems);
-            mediator.GetHandler<LootInteractable>().AddItems(loot, request.DroppedItems).Save();
+            loot.AddItems(request.DroppedItems);
+            mediator.GetHandler<PlayerInventory>().RemoveItems(playerId, request.DroppedItems).Save();
 
             mediator.GetHandler<RoomUpdateAlerter>().Send(player.LocationId);
             mediator.GetHandler<DroppedItemsAlerter>().Send(player.LocationId, request.DroppedItems.First(), request.Name);

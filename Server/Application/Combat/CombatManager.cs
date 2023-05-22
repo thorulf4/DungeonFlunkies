@@ -1,19 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Server.Application.Alerts;
+﻿using Server.Application.Alerts;
 using Server.Application.Character;
-using Server.Application.Combat.AI;
 using Server.Application.Combat.Enemies;
-using Server.Application.Interactables;
+using Server.Application.GameWorld;
 using Server.Interactables;
 using Server.Model;
-using Server.Model.Skills;
 using Shared;
 using Shared.Alerts.Combat;
 using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Server.Application.Combat
 {
@@ -111,7 +107,7 @@ namespace Server.Application.Combat
                 encounterIndex.Remove(player.playerId);
             }
             var alivePlayerNames = encounter.playerTeam.Where(p => p.alive).Select(p => p.name).ToList();
-            mediator.GetHandler<DynamicInteractables>().Remove(encounter.roomId, encounter.joinInteraction);
+            mediator.GetHandler<World>().GetRoom(encounter.roomId).Remove(encounter.joinInteraction);
             alerter.SendAlerts(new WonCombatAlert(), alivePlayerNames);
         }
 
@@ -131,7 +127,7 @@ namespace Server.Application.Combat
                 encounterIndex.Add(player.Id, encounter);
 
             encounter.joinInteraction = new JoinCombat(encounter);
-            mediator.GetHandler<DynamicInteractables>().AddInteractable(roomId, encounter.joinInteraction);
+            mediator.GetHandler<World>().GetRoom(roomId).Create(encounter.joinInteraction);
 
             encounter.nextTurn = DateTime.Now.AddMilliseconds(GameSettings.turnTimeInMs);
             encounter.nextTurnInvocation = dispatcher.InvokeIn(GameSettings.turnTimeInMs, () => NextTurn(encounter));

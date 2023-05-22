@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Application;
 using Server.Application.Character;
+using Server.Application.GameWorld;
 using Server.Interactables;
 using Server.Model;
 using Shared;
@@ -30,14 +31,14 @@ namespace Server.RequestHandlers.Rooms
         {
             int playerId = authenticator.VerifySession(request.Name, request.SessionId);
 
-            int roomId = mediator.GetHandler<GetPlayer>().Get(playerId).LocationId;
+            Player player = mediator.GetHandler<GetPlayer>().Get(playerId);
 
-            string[] peopleInRoom = mediator.GetHandler<GetPlayer>().GetInRoom(roomId).Select(p => p.Name).ToArray();
-            var interactables = mediator.GetHandler<GetInteractable>().GetInRoom(roomId).ToArray();
+            string[] peopleInRoom = mediator.GetHandler<GetPlayer>().GetInRoom(player.LocationId).Select(p => p.Name).ToArray();
+            var interactables = mediator.GetHandler<World>().GetRoom(player).Interactables;
 
             return Response.From(new RoomResponse
             {
-                RoomId = roomId,
+                RoomId = player.LocationId,
                 Interactions = interactables.Select(i => i.GetDescriptor(context)).ToArray(),
                 PeopleInRoom = peopleInRoom
             });

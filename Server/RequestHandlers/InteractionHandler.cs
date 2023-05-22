@@ -1,16 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Server.Application;
-using Server.Application.Alerts;
+﻿using Server.Application;
 using Server.Application.Character;
-using Server.Application.Interactables;
+using Server.Application.GameWorld;
+using Server.Interactables;
 using Server.Model;
 using Shared;
-using Shared.Descriptors;
 using Shared.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Server.RequestHandlers
 {
@@ -31,18 +25,9 @@ namespace Server.RequestHandlers
         public override Response Handle(InteractionRequest request)
         {
             int playerid = authenticator.VerifySession(request.Name, request.SessionId);
-            Player player = mediator.GetHandler<GetPlayer>().GetWithLocation(playerid);
+            Player player = mediator.GetHandler<GetPlayer>().Get(playerid);
 
-            IInteractable interactable;
-            if (request.Interaction is DynamicInteractionDescriptor)
-            {
-                interactable = mediator.GetHandler<DynamicInteractables>().GetForRoom(player.LocationId).FirstOrDefault(i => i.Id == request.Interaction.Id);
-            }
-            else
-            {
-                interactable = mediator.GetHandler<GetInteractable>().Get(request.Interaction.Id);
-
-            }
+            IInteractable interactable = mediator.GetHandler<World>().GetRoom(player).GetInteraction(request.Interaction.Id);
 
             if(interactable != null)
             {

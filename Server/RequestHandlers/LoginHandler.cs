@@ -1,15 +1,8 @@
 ﻿using Server.Application;
 using Server.Application.Character;
-using Server.Application.Interactables;
-using Server.Interactables;
 using Server.Model;
 using Shared;
-using Shared.Requests;
 using Shared.Requests.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Server.RequestHandlers
 {

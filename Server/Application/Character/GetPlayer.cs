@@ -25,11 +25,6 @@ namespace Server.Application.Character
         {
             return context.Players.FirstOrDefault(player => player.Name == playerName);
         }
-
-        public Player GetWithLocation(int playerId)
-        {
-            return context.Players.Where(player => player.Id == playerId).Include(p => p.Location).Single();
-        }
         
         public List<Player> GetInRoom(int roomId)
         {

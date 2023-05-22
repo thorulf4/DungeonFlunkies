@@ -34,23 +34,16 @@ namespace Server
                 context.Database.Migrate();
 
                 Console.WriteLine(context.Players.Count());
-                foreach (var p in context.Players.Select(x => $"{x.Name} in {x.Location.Id}"))
+                foreach (var p in context.Players.Select(x => $"{x.Name} in {x.LocationId}"))
                 {
                     Console.WriteLine(p);
                 }
 
                 //Seed the database
-                if (context.Rooms.Count() == 0)
+                if (context.Skills.Count() == 0)
                 {
-                    Room room1 = new Room();
-                    Room room2 = new Room();
                     Equipment sword = new Equipment { BaseValue = 1, Name = "Sword", Type = EquipmentType.Holdable };
-
-                    context.Add(room1);
-                    context.Add(room2);
                     context.Add(sword);
-
-
                     context.SaveChanges();
 
                     DamageSkill swing = new DamageSkill
@@ -63,20 +56,14 @@ namespace Server
                         UsesAction = true
                     };
                     context.Add(swing);
-
-                    room1.Interactables.Add(new Path { LeadsTo = context.Rooms.Find(room2.Id) });
-                    room2.Interactables.Add(new Path { LeadsTo = context.Rooms.Find(room1.Id) });
-                    room2.Interactables.Add(new OptionalCombat { RoomId = room2.Id });
-
-
                     context.SaveChanges();
 
-                    startingRoomId = room1.Id;
+                    startingRoomId = 0;
                     testSwordId = sword.Id;
                 }
                 else
                 {
-                    startingRoomId = context.Rooms.FirstOrDefault().Id;
+                    startingRoomId = 0;
                     testSwordId = 1;
                 }
             }

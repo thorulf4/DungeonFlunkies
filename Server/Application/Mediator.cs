@@ -2,6 +2,7 @@
 using Server.Application.Alerts;
 using Server.Application.Character;
 using Server.Application.Combat;
+using Server.Application.GameWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +25,11 @@ namespace Server.Application
             services.AddSingleton(dispatcherService);
             services.AddSingleton(authenticator);
             services.AddSingleton(this);
+            services.AddSingleton<World>();
             AddHandlers();
             CreateProvider();
+
+            GetHandler<World>().CreateDefaultWorld(this);
         }
 
         public void CreateProvider()

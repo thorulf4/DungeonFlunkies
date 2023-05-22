@@ -19,8 +19,6 @@ namespace Server.Model
         public string Secret { get; set; }
 
         public int Health { get; set; }
-
-        public Room Location { get; set; }
         public int LocationId { get; set; }
 
         public List<OwnedBy> Inventory { get; set; }
