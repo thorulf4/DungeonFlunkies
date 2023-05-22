@@ -2,6 +2,7 @@
 using Server.Application.Alerts;
 using Server.Application.Character;
 using Server.Application.Combat;
+using Server.Application.Combat.Skills;
 using Server.Application.GameWorld;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace Server.Application
             services.AddSingleton(authenticator);
             services.AddSingleton(this);
             services.AddSingleton<World>();
+            services.AddSingleton<SkillManager>();
             AddHandlers();
             CreateProvider();
 

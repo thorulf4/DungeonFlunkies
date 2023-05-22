@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Server.Application;
+using Server.Application.Combat.Skills;
 using Server.Interactables;
 using Server.Model;
 using Server.Model.Items;
-using Server.Model.Skills;
 using Server.Pipelining;
 using Server.RequestHandlers;
 using Server.RequestHandlers.Character;
@@ -40,22 +40,10 @@ namespace Server
                 }
 
                 //Seed the database
-                if (context.Skills.Count() == 0)
+                if (context.Items.Count() == 0)
                 {
-                    Equipment sword = new Equipment { BaseValue = 1, Name = "Sword", Type = EquipmentType.Holdable };
+                    Equipment sword = new Equipment { BaseValue = 1, Name = "Sword", Type = EquipmentType.Holdable, EquipmentTemplate="Sword", ItemPower=65 };
                     context.Add(sword);
-                    context.SaveChanges();
-
-                    DamageSkill swing = new DamageSkill
-                    {
-                        Cooldown = 1,
-                        Damage = 65,
-                        Description = "You swing your sword at your enemy",
-                        Name = "Swing",
-                        Item = sword,
-                        UsesAction = true
-                    };
-                    context.Add(swing);
                     context.SaveChanges();
 
                     startingRoomId = 0;

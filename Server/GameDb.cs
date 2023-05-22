@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Server.Application.Combat.Skills;
 using Server.Interactables;
 using Server.Model;
 using Server.Model.Items;
-using Server.Model.Skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,6 @@ namespace Server
     {
         public DbSet<Player> Players { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<Skill> Skills { get; set; }
         public DbSet<OwnedBy> OwnedBys { get; set; }
         public DbSet<Equipped> Equipped { get; set; }
 
@@ -30,16 +29,6 @@ namespace Server
                 .HasDiscriminator<string>("item_type");
 
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(Item))).ToArray())
-            {
-                disc.HasValue(type, type.Name);
-            }
-
-
-            disc = modelBuilder.Entity<Skill>()
-                .HasDiscriminator<string>("skill_type");
-            modelBuilder.Entity<Skill>().HasOne<Equipment>("Item").WithMany("Skills").HasForeignKey("ItemId").IsRequired().OnDelete(DeleteBehavior.Cascade);
-
-            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(Skill))).ToArray())
             {
                 disc.HasValue(type, type.Name);
             }

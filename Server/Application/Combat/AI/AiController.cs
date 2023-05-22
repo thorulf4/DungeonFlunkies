@@ -1,4 +1,4 @@
-﻿using Server.Model.Skills;
+﻿using Server.Application.Combat.Skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;

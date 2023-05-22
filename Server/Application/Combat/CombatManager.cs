@@ -75,7 +75,7 @@ namespace Server.Application.Combat
             if (actualSkill.UsesBonusAction)
                 player.hasBonusAction = false;
 
-            actualSkill.skill.Apply(target);
+            actualSkill.Apply(target);
 
             actualSkill.CurrentCooldown = actualSkill.Cooldown;
             skill.Cooldown = actualSkill.CurrentCooldown;

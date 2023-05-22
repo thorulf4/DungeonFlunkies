@@ -1,5 +1,5 @@
 ﻿using Server.Application.Combat;
-using Server.Model.Skills;
+using Server.Application.Combat.Skills;
 using Shared.Descriptors;
 using System;
 using System.Collections.Generic;

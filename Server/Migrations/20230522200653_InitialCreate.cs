@@ -4,7 +4,7 @@
 
 namespace Server.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,7 +17,9 @@ namespace Server.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     BaseValue = table.Column<int>(type: "INTEGER", nullable: false),
                     item_type = table.Column<string>(type: "TEXT", nullable: false),
-                    Type = table.Column<int>(type: "INTEGER", nullable: true)
+                    Type = table.Column<int>(type: "INTEGER", nullable: true),
+                    EquipmentTemplate = table.Column<string>(type: "TEXT", nullable: true),
+                    ItemPower = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -38,32 +40,6 @@ namespace Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Players", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Skills",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    Cooldown = table.Column<int>(type: "INTEGER", nullable: false),
-                    UsesAction = table.Column<bool>(type: "INTEGER", nullable: false),
-                    UsesBonusAction = table.Column<bool>(type: "INTEGER", nullable: false),
-                    skill_type = table.Column<string>(type: "TEXT", nullable: false),
-                    Damage = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Skills", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Skills_Items_ItemId",
-                        column: x => x.ItemId,
-                        principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -134,11 +110,6 @@ namespace Server.Migrations
                 name: "IX_OwnedBys_OwnerId",
                 table: "OwnedBys",
                 column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Skills_ItemId",
-                table: "Skills",
-                column: "ItemId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -150,13 +121,10 @@ namespace Server.Migrations
                 name: "OwnedBys");
 
             migrationBuilder.DropTable(
-                name: "Skills");
+                name: "Items");
 
             migrationBuilder.DropTable(
                 name: "Players");
-
-            migrationBuilder.DropTable(
-                name: "Items");
         }
     }
 }

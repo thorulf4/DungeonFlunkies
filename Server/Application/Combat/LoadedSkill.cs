@@ -1,4 +1,4 @@
-﻿using Server.Model.Skills;
+﻿using Server.Application.Combat.Skills;
 using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
@@ -12,11 +12,13 @@ namespace Server.Application.Combat
     {
         public int CurrentCooldown { get; set; }
         public Skill skill;
+        public int ItemPower { get; set; }
 
-        public LoadedSkill(Skill skill)
+        public LoadedSkill(Skill skill, int itemPower)
         {
             CurrentCooldown = 0;
             this.skill = skill;
+            ItemPower = itemPower;
         }
 
         public int Id => skill.Id;
@@ -36,7 +38,7 @@ namespace Server.Application.Combat
             if (OnCooldown)
                 throw new Exception("Cannot use ability thats on cooldown");
 
-            skill.Apply(target);
+            skill.Apply(target, ItemPower);
             CurrentCooldown = Cooldown;
         }
 

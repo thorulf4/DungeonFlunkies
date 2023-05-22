@@ -10,8 +10,8 @@ using Server;
 namespace Server.Migrations
 {
     [DbContext(typeof(GameDb))]
-    [Migration("20230522013532_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20230522200653_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -112,46 +112,15 @@ namespace Server.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("Server.Model.Skills.Skill", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Cooldown")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("UsesAction")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("UsesBonusAction")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("skill_type")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("Skills");
-
-                    b.HasDiscriminator<string>("skill_type").HasValue("Skill");
-                });
-
             modelBuilder.Entity("Server.Model.Items.Equipment", b =>
                 {
                     b.HasBaseType("Server.Model.Items.Item");
+
+                    b.Property<string>("EquipmentTemplate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ItemPower")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
@@ -164,16 +133,6 @@ namespace Server.Migrations
                     b.HasBaseType("Server.Model.Items.Item");
 
                     b.HasDiscriminator().HasValue("MiscItem");
-                });
-
-            modelBuilder.Entity("Server.Model.Skills.DamageSkill", b =>
-                {
-                    b.HasBaseType("Server.Model.Skills.Skill");
-
-                    b.Property<int>("Damage")
-                        .HasColumnType("INTEGER");
-
-                    b.HasDiscriminator().HasValue("DamageSkill");
                 });
 
             modelBuilder.Entity("Server.Model.Equipped", b =>
@@ -214,27 +173,11 @@ namespace Server.Migrations
                     b.Navigation("Owns");
                 });
 
-            modelBuilder.Entity("Server.Model.Skills.Skill", b =>
-                {
-                    b.HasOne("Server.Model.Items.Equipment", "Item")
-                        .WithMany("Skills")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-                });
-
             modelBuilder.Entity("Server.Model.Player", b =>
                 {
                     b.Navigation("Equipment");
 
                     b.Navigation("Inventory");
-                });
-
-            modelBuilder.Entity("Server.Model.Items.Equipment", b =>
-                {
-                    b.Navigation("Skills");
                 });
 #pragma warning restore 612, 618
         }

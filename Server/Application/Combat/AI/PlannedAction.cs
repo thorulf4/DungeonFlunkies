@@ -1,5 +1,4 @@
-﻿using Server.Model.Skills;
-using Shared.Descriptors;
+﻿using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Text;

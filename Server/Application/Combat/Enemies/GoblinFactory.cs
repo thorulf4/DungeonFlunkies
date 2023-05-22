@@ -1,4 +1,4 @@
-﻿using Server.Model.Skills;
+﻿using Server.Application.Combat.Skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Server.Application.Combat.Enemies
 
         public static Enemy Create()
         {
-            List<LoadedSkill> skills = new List<LoadedSkill>() { new (attackSkill) };
+            List<LoadedSkill> skills = new List<LoadedSkill>() { new (attackSkill, 1) };
 
             return new Enemy("Goblin", 100, skills);
         }

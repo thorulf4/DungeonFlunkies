@@ -32,8 +32,8 @@ namespace Server.Application.Character
 
         private void GiveStartingItems(Player player)
         {
-            context.Add(new OwnedBy { OwnsId = Program.testSwordId, OwnerId = player.Id, Count = 10 });
-            context.SaveChanges();
+            //context.Add(new OwnedBy { OwnsId = Program.testSwordId, OwnerId = player.Id, Count = 10 });
+            //context.SaveChanges();
         }
     }
 }

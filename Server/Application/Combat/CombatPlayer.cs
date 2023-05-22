@@ -1,4 +1,5 @@
 ﻿using Server.Application.Character;
+using Server.Application.Combat.Skills;
 using Server.Model;
 using Shared.Descriptors;
 using System;
@@ -25,7 +26,7 @@ namespace Server.Application.Combat
             name = player.Name;
             maxHealth = 100;
             health = player.Health;
-            skills = mediator.GetHandler<GetSkills>().GetLoadedFromPlayer(player.Id);
+            skills = mediator.GetHandler<SkillManager>().GetLoadedFromPlayer(player.Id);
 
             hasAction = true;
             hasBonusAction = true;
