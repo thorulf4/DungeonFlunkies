@@ -19,10 +19,5 @@ namespace Server.Application.Combat
 
             alive = true;
         }
-
-        public override void Die()
-        {
-            alive = false;
-        }
     }
 }
