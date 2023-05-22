@@ -18,10 +18,7 @@ namespace Server.Application.Combat.Skills
 
         public override void Apply(CombatEntity target, int ItemPower)
         {
-            var stun = new StunEffect(Duration);
-            stun.Tick(target); // Cause effect immedietely
-
-            target.AddEffect(stun);
+            target.AddEffect(new StunEffect(Duration));
             base.Apply(target, ItemPower);
         }
     }

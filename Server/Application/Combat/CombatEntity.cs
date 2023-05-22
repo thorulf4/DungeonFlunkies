@@ -61,6 +61,7 @@ namespace Server.Application.Combat
 
         public void AddEffect(Effect effect)
         {
+            effect.OnEffectStart(this);
             activeEffects.Add(effect);
         }
 
@@ -78,6 +79,7 @@ namespace Server.Application.Combat
                 else
                 {
                     activeEffects.RemoveAt(i);
+                    effect.OnEffectEnd(this);
                 }
             }
         }

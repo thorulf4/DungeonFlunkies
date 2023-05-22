@@ -10,6 +10,8 @@ namespace Server.Application.Combat.Effects
     {
         public int TurnsLeft { get; set; }
 
+        public abstract void OnEffectStart(CombatEntity entity);
         public abstract void Tick(CombatEntity entity);
+        public abstract void OnEffectEnd(CombatEntity entity);
     }
 }

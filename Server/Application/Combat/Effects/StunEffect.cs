@@ -13,6 +13,15 @@ namespace Server.Application.Combat.Effects
             TurnsLeft = duration;
         }
 
+        public override void OnEffectEnd(CombatEntity entity)
+        {
+        }
+
+        public override void OnEffectStart(CombatEntity entity)
+        {
+            Tick(entity);
+        }
+
         public override void Tick(CombatEntity entity)
         {
             if(entity is Enemy enemy)
