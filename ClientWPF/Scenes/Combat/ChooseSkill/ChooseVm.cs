@@ -145,21 +145,6 @@ namespace ClientWPF.Scenes.Combat
             Notify("HasBonusAction");
         }
 
-        public RelayCommand Back
-        {
-            get
-            {
-                return new RelayCommand(o =>
-                {
-                    //Return to previous scene
-                    sceneManager.PopScene();
-
-                    
-                });
-            }
-        }
-        
-
         public RelayCommand SkillSelected
         {
             get
