@@ -27,7 +27,7 @@ namespace Server.RequestHandlers
             int playerid = authenticator.VerifySession(request.Name, request.SessionId);
             Player player = mediator.GetHandler<GetPlayer>().Get(playerid);
 
-            IInteractable interactable = mediator.GetHandler<World>().GetRoom(player).GetInteraction(request.Interaction.Id);
+            Interactable interactable = mediator.GetHandler<World>().GetRoom(player).GetInteraction(request.Interaction.Id);
 
             if(interactable != null)
             {

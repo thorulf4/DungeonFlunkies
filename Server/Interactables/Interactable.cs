@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Server.Interactables
 {
-    public abstract class Interactable : IInteractable
+    public abstract class Interactable
     {
         public int Id { get; set; }
 

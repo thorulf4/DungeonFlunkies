@@ -47,7 +47,7 @@ namespace Server.Application.GameWorld
             return Interactables.Select(i => i.GetDescriptor(context)).ToArray();
         }
 
-        public IInteractable GetInteraction(int id)
+        public Interactable GetInteraction(int id)
         {
             return Interactables.FirstOrDefault(i => i.Id == id);
         }
