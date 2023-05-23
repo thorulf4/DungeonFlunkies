@@ -18,9 +18,9 @@ namespace Server.Interactables
             this.encounter = encounter;
         }
 
-        public override DynamicInteractionDescriptor GetDescriptor(GameDb context)
+        public override InteractionDescriptor GetDescriptor(GameDb context)
         {
-            return new DynamicInteractionDescriptor()
+            return new InteractionDescriptor()
             {
                 Id = Id,
                 ActionName = "Join combat"
