@@ -22,7 +22,7 @@ namespace ClientWPF.Scenes.Combat
         private readonly Player player;
         private readonly SceneManagerVm sceneManager;
 
-        public IReadOnlyList<SkillDescriptor> Skills { get; set; }
+        public IReadOnlyList<SkillViewModel> Skills { get; set; }
         public TargetList Enemies { get; set; }
         public TargetList Allies { get; set; }
 
@@ -73,13 +73,15 @@ namespace ClientWPF.Scenes.Combat
             UpdateEncounter(alert.Enemies, alert.Allies);
             Timer.StartTurn(0);
 
-            foreach(var skill in Skills)
-            {
-                skill.CurrentCooldown = Math.Max(0, skill.CurrentCooldown - 1);
-            }
-
             var currentPlayer = alert.Allies.First(p => p.Name == player.Name);
             UpdatePlayer(currentPlayer);
+
+            foreach(var skillVm in Skills)
+            {
+                skillVm.skill.CurrentCooldown = Math.Max(0, skillVm.skill.CurrentCooldown - 1);
+                skillVm.Update(HasAction, HasBonusAction);
+            }
+            Notify("Skills");
         }
 
         private async void GetEncounter()
@@ -92,12 +94,13 @@ namespace ClientWPF.Scenes.Combat
                 if (!response.HasEncounter)
                     return;
 
-                Skills = response.Skills.AsReadOnly();
                 Timer.SetEndTime(response.Encounter.TurnEnds);
                 UpdateEncounter(response.Encounter.Enemies, response.Encounter.Allies);
 
                 var currentPlayer = response.Encounter.Allies.First(p => p.Name == player.Name);
                 UpdatePlayer(currentPlayer);
+                Skills = response.Skills.Select(s => new SkillViewModel(s, HasAction, HasBonusAction)).ToList().AsReadOnly();
+                Notify("Skills");
             }
             else
             {
@@ -130,7 +133,6 @@ namespace ClientWPF.Scenes.Combat
 
             Notify("Enemies");
             Notify("Allies");
-            Notify("Skills");
         }
 
         private void UpdatePlayer(EntityDescriptor currentPlayer)
@@ -162,9 +164,9 @@ namespace ClientWPF.Scenes.Combat
         {
             get
             {
-                return new RelayCommand(skill =>
+                return new RelayCommand(skillVm =>
                 {
-                    SkillDescriptor skillDescriptor = (SkillDescriptor)skill;
+                    SkillDescriptor skillDescriptor = ((SkillViewModel)skillVm).skill;
 
                     if(skillDescriptor.CurrentCooldown <= 0)
                         sceneManager.PushScene(new ChooseTargetVm(sceneManager, this, (target) => OnTargetChosen(skillDescriptor, target)));

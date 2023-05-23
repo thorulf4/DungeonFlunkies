@@ -40,7 +40,7 @@
             <ListBox Grid.Row="3" IsEnabled="False" ItemsSource="{Binding ParentScene.Skills}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Button Content="{Binding Name}">
+                        <Button Content="{Binding Text}" IsEnabled="{Binding IsUsable}">
 
                         </Button>
                     </DataTemplate>

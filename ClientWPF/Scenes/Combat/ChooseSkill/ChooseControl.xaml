@@ -23,11 +23,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <ContentControl Content="{Binding Enemies}"/>
-        <Button Command="{Binding Back}" HorizontalAlignment="Left" VerticalAlignment="Top">
-            Back
-        </Button>
-
-
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80px"/>
@@ -64,8 +59,8 @@
             <ListBox ItemsSource="{Binding Skills}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Button Content="{Binding Name}" Command="{Binding Path=DataContext.SkillSelected, ElementName=userControl}" 
-                            CommandParameter="{Binding}">
+                        <Button Content="{Binding Text}" Command="{Binding Path=DataContext.SkillSelected, ElementName=userControl}" 
+                            CommandParameter="{Binding}" IsEnabled="{Binding IsUsable}">
 
                         </Button>
                     </DataTemplate>
