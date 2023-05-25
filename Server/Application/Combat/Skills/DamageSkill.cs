@@ -9,17 +9,13 @@ namespace Server.Application.Combat.Skills
     {
         public float DamageRatio { get; set; }
 
-        public DamageSkill()
-        {
+        public override TargetType TargetType => TargetType.Enemies;
 
-        }
-
-        public DamageSkill(string name, float damageRatio)
+        public DamageSkill(string name, float damageRatio) : base(name)
         {
             DamageRatio = damageRatio;
             Cooldown = 0;
             UsesAction = true;
-            Name = name;
         }
 
         public override void Apply(CombatEntity target, int ItemPower)

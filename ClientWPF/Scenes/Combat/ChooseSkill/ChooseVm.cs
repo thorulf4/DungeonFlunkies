@@ -1,5 +1,6 @@
 ﻿using ClientWPF.Utils.Wpf;
 using ClientWPF.ViewModels;
+using Server.Application.Combat.Skills;
 using Shared;
 using Shared.Alerts.Combat;
 using Shared.Descriptors;
@@ -21,12 +22,14 @@ namespace ClientWPF.Scenes.Combat
         private readonly RequestClient client;
         private readonly Player player;
         private readonly SceneManagerVm sceneManager;
+        private EntityDescriptor currentPlayer;
 
         public IReadOnlyList<SkillViewModel> Skills { get; set; }
         public TargetList Enemies { get; set; }
         public TargetList Allies { get; set; }
 
         public TurnTimer Timer { get; set; }
+
 
         public bool HasAction { get; set; }
         public bool HasBonusAction { get; set; }
@@ -113,23 +116,10 @@ namespace ClientWPF.Scenes.Combat
             Debug.Assert(!hasWon);
 
             Enemies = new TargetList();
-            Enemies.AddRange(enemies.Select(e => new Target()
-            {
-                Health = e.Health,
-                MaxHealth = e.MaxHealth,
-                Name = e.Name,
-                Id = e.Id,
-                Action = e.Action,
-            }).ToList());
+            Enemies.AddRange(enemies.Select(e => new Target(e)).ToList());
 
             Allies = new TargetList();
-            Allies.AddRange(allies.Select(e => new Target()
-            {
-                Health = e.Health,
-                MaxHealth = e.MaxHealth,
-                Name = e.Name,
-                Id = e.Id,
-            }).ToList());
+            Allies.AddRange(allies.Select(e => new Target(e)).ToList());
 
             Notify("Enemies");
             Notify("Allies");
@@ -138,6 +128,7 @@ namespace ClientWPF.Scenes.Combat
         private void UpdatePlayer(EntityDescriptor currentPlayer)
         {
             Debug.Assert(!hasWon);
+            this.currentPlayer = currentPlayer;
             HasAction = currentPlayer.HasAction;
             HasBonusAction = currentPlayer.HasBonusAction;
 
@@ -153,8 +144,13 @@ namespace ClientWPF.Scenes.Combat
                 {
                     SkillDescriptor skillDescriptor = ((SkillViewModel)skillVm).skill;
 
-                    if(skillDescriptor.CurrentCooldown <= 0)
-                        sceneManager.PushScene(new ChooseTargetVm(sceneManager, this, (target) => OnTargetChosen(skillDescriptor, target)));
+                    if (skillDescriptor.CurrentCooldown > 0)
+                        return;
+
+                    if (skillDescriptor.TargetType != TargetType.Self)
+                        sceneManager.PushScene(new ChooseTargetVm(sceneManager, this, skillDescriptor, (target) => OnTargetChosen(skillDescriptor, target.Id)));
+                    else
+                        OnTargetChosen(skillDescriptor, currentPlayer.Id);
                 });
             }
         }
@@ -176,11 +172,12 @@ namespace ClientWPF.Scenes.Combat
             }
         }
 
-        private void OnTargetChosen(SkillDescriptor skill, Target target)
+        private void OnTargetChosen(SkillDescriptor skill, int targetId)
         {
-            sceneManager.PopScene();
+            if(sceneManager.CurrentScene is ChooseTargetVm)
+                sceneManager.PopScene();
 
-            client.SendAction(new UseSkillRequest(skill, target.Id), player);
+            client.SendAction(new UseSkillRequest(skill, targetId), player);
             GetEncounter();
         }
 

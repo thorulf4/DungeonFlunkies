@@ -1,11 +1,4 @@
-﻿using Server.Application.Combat;
-using Server.Model;
-using Server.Model.Items;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Server.Application.Combat.Skills
+﻿namespace Server.Application.Combat.Skills
 {
     public abstract class Skill
     {
@@ -19,6 +12,12 @@ namespace Server.Application.Combat.Skills
         public bool UsesAction { get; set; }
         public bool UsesBonusAction { get; set; }
 
+        protected Skill(string name)
+        {
+            Name = name;
+        }
+
+        public abstract TargetType TargetType { get; }
         public abstract void Apply(CombatEntity target, int ItemPower);
     }
 }

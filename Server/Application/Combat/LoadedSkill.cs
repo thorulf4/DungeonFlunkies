@@ -33,7 +33,7 @@ namespace Server.Application.Combat
 
         public bool OnCooldown => CurrentCooldown > 0;
 
-        internal void Apply(CombatEntity target)
+        public void Apply(CombatEntity target)
         {
             if (OnCooldown)
                 throw new Exception("Cannot use ability thats on cooldown");
@@ -44,16 +44,7 @@ namespace Server.Application.Combat
 
         public SkillDescriptor GetDescriptor()
         {
-            return new SkillDescriptor
-            {
-                Id = skill.Id,
-                Name = skill.Name,
-                Description = skill.Description,
-                Cooldown = skill.Cooldown,
-                CurrentCooldown = CurrentCooldown,
-                UsesAction = skill.UsesAction,
-                UsesBonusAction = skill.UsesBonusAction,
-            };
+            return skill.GetDescriptor(CurrentCooldown);
         }
     }
 }

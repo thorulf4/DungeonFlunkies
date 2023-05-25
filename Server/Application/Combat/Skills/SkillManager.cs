@@ -45,6 +45,14 @@ namespace Server.Application.Combat.Skills
                     Cooldown = 3
                 }
             });
+            AddItemTemplate("FastShoes", new List<Skill>()
+            {
+                new RefreshActionSkill("Hasten")
+                {
+                    Cooldown = 2,
+                    RefreshBonusAction = true
+                }
+            });
         }
 
         private void AddItemTemplate(string name, List<Skill> templatedSkill)

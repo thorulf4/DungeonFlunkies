@@ -1,5 +1,7 @@
 ﻿using ClientWPF.Utils.Wpf;
 using ClientWPF.ViewModels;
+using Server.Application.Combat.Skills;
+using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,18 +14,27 @@ namespace ClientWPF.Scenes.Combat
         private readonly SceneManagerVm sceneManager;
         private readonly Action<Target> callback;
 
+        public bool canTargetEnemy { get; set; }
+        public bool canTargetAllies { get; set; }
+
         public ChooseVm ParentScene { get; set; }
 
-        public ChooseTargetVm(SceneManagerVm sceneManager,  ChooseVm chooseVm, Action<Target> callback)
+        public ChooseTargetVm(SceneManagerVm sceneManager,  ChooseVm chooseVm, SkillDescriptor skill, Action<Target> callback)
         {
             ParentScene = chooseVm;
             this.sceneManager = sceneManager;
             this.callback = callback;
 
-            chooseVm.Enemies.OnTargetSelected += EnemyClicked;
+            canTargetEnemy = skill.TargetType == TargetType.Enemies || skill.TargetType == TargetType.All;
+            canTargetAllies = skill.TargetType == TargetType.Allies || skill.TargetType == TargetType.All;
+
+            if (canTargetEnemy)
+                chooseVm.Enemies.OnTargetSelected += TargetClicked;
+            else if (canTargetAllies)
+                chooseVm.Allies.OnTargetSelected += TargetClicked;
         }
 
-        private void EnemyClicked(object sender, Target target)
+        private void TargetClicked(object sender, Target target)
         {
             callback(target);
         }
@@ -56,7 +67,10 @@ namespace ClientWPF.Scenes.Combat
 
         public override void Unload()
         {
-            ParentScene.Enemies.OnTargetSelected -= EnemyClicked;
+            if (canTargetEnemy)
+                ParentScene.Enemies.OnTargetSelected -= TargetClicked;
+            else if (canTargetAllies)
+                ParentScene.Allies.OnTargetSelected -= TargetClicked;
         }
     }
 }

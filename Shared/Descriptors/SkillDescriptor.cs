@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.Application.Combat.Skills;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,6 +16,8 @@ namespace Shared.Descriptors
         public bool UsesAction { get; set; }
         public bool UsesBonusAction { get; set; }
 
+        public TargetType TargetType { get; set; }
+
 
         public bool OnCooldown => CurrentCooldown > 0; 
 
@@ -22,17 +25,5 @@ namespace Shared.Descriptors
         {
 
         }
-
-        public SkillDescriptor(int id, string name, string description, int cooldown)
-        {
-            this.Id = id;
-            Name = name;
-            Description = description;
-            Cooldown = cooldown;
-            CurrentCooldown = 0;
-        }
-        //Add effect later?
-
-
     }
 }

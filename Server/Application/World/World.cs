@@ -29,6 +29,7 @@ namespace Server.Application.GameWorld
             loot.AddItem(mediator.GetHandler<GetItem>().GetDescriptor(Program.testSwordId, 5));
             loot.AddItem(mediator.GetHandler<GetItem>().GetDescriptor(Program.testDaggerId, 5));
             loot.AddItem(mediator.GetHandler<GetItem>().GetDescriptor(Program.testShieldId, 5));
+            loot.AddItem(mediator.GetHandler<GetItem>().GetDescriptor(Program.testShoesId, 5));
 
             rooms.Add(0, room1);
             rooms.Add(1, room2);

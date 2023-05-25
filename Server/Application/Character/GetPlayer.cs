@@ -18,12 +18,12 @@ namespace Server.Application.Character
 
         public Player Get(int playerId)
         {
-            return context.Players.FirstOrDefault(player => player.Id == playerId);
+            return context.Players.First(player => player.Id == playerId);
         }
 
         public Player Get(string playerName)
         {
-            return context.Players.FirstOrDefault(player => player.Name == playerName);
+            return context.Players.First(player => player.Name == playerName);
         }
         
         public List<Player> GetInRoom(int roomId)

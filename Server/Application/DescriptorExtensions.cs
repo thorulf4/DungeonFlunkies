@@ -23,7 +23,8 @@ namespace Server.Application
                 Cooldown = skill.Cooldown,
                 CurrentCooldown = cooldown,
                 UsesAction = skill.UsesAction,
-                UsesBonusAction = skill.UsesBonusAction
+                UsesBonusAction = skill.UsesBonusAction,
+                TargetType = skill.TargetType
             };
         }
     }

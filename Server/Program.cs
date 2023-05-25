@@ -28,6 +28,7 @@ namespace Server
         public static int testSwordId;
         public static int testDaggerId;
         public static int testShieldId;
+        public static int testShoesId;
 
         static void Main(string[] args)
         {
@@ -47,15 +48,18 @@ namespace Server
                     Equipment sword = new Equipment { BaseValue = 1, Name = "Sword", Type = EquipmentType.Holdable, EquipmentTemplate="Sword", ItemPower=65 };
                     Equipment dagger = new Equipment { BaseValue = 1, Name = "Dagger", Type = EquipmentType.Holdable, EquipmentTemplate = "Dagger", ItemPower = 65 };
                     Equipment shield = new Equipment { BaseValue = 1, Name = "Shield", Type = EquipmentType.Holdable, EquipmentTemplate = "Shield", ItemPower = 65 };
+                    Equipment shoes = new Equipment { BaseValue = 1, Name = "Light Pants", Type = EquipmentType.Legs, EquipmentTemplate = "FastShoes", ItemPower = 65 };
                     context.Add(sword);
                     context.Add(dagger);
                     context.Add(shield);
+                    context.Add(shoes);
                     context.SaveChanges();
 
                     startingRoomId = 0;
                     testSwordId = sword.Id;
                     testDaggerId = dagger.Id;
                     testShieldId = shield.Id;
+                    testShoesId = shoes.Id;
                 }
                 else
                 {
@@ -63,6 +67,7 @@ namespace Server
                     testSwordId = 1;
                     testDaggerId = 2;
                     testShieldId = 3;
+                    testShoesId = 4;
                 }
             }
 
