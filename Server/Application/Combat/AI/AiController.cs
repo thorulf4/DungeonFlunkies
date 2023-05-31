@@ -11,15 +11,14 @@ namespace Server.Application.Combat.AI
         public static void SetNextAction(Enemy entity, List<Enemy> entityAllies , List<CombatPlayer> players)
         {
             //Consider adding 50% health check before healing
+            entity.plannedAction = null;
 
             Random random = new Random();
 
             LoadedSkill[] skills = entity.skills.Where(s => !s.OnCooldown).ToArray();
             if (skills.Length == 0)
-            {
-                entity.plannedAction = null;
                 return;
-            }
+
             int skillIndex = random.Next(skills.Length);
             LoadedSkill skill = skills[skillIndex];
 
