@@ -26,6 +26,7 @@ namespace Server.Application.Combat.Effects
         {
             if(entity is Enemy enemy)
             {
+                enemy.plannedAction.skill.PutOnCooldown();
                 enemy.plannedAction = null;
             }else if(entity is CombatPlayer player)
             {

@@ -18,7 +18,7 @@ namespace Server.Application.Combat.Skills
             UsesAction = true;
         }
 
-        public override void Apply(CombatEntity target, int ItemPower)
+        public override void Apply(Encounter encounter, CombatEntity target, int ItemPower)
         {
             target.TakeDamage((int)(ItemPower * DamageRatio));
         }

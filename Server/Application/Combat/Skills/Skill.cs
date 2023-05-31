@@ -18,6 +18,6 @@
         }
 
         public abstract TargetType TargetType { get; }
-        public abstract void Apply(CombatEntity target, int ItemPower);
+        public abstract void Apply(Encounter encounter, CombatEntity target, int ItemPower);
     }
 }

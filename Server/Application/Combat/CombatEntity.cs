@@ -29,6 +29,11 @@ namespace Server.Application.Combat
             }
         }
 
+        public void HealDamage(int amount)
+        {
+            health = Math.Min(maxHealth, health + amount);
+        }
+
         public virtual void Die()
         {
             alive = false;

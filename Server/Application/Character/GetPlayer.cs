@@ -18,12 +18,12 @@ namespace Server.Application.Character
 
         public Player Get(int playerId)
         {
-            return context.Players.First(player => player.Id == playerId);
+            return context.Players.First(player => player.Id == playerId); // May get a null pointer after death
         }
 
         public Player Get(string playerName)
         {
-            return context.Players.First(player => player.Name == playerName);
+            return context.Players.First(player => player.Name == playerName); // Null pointer when logging in without a character
         }
         
         public List<Player> GetInRoom(int roomId)

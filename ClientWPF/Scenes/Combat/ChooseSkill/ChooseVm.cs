@@ -43,7 +43,7 @@ namespace ClientWPF.Scenes.Combat
             Enemies = new TargetList();
             Allies = new TargetList();
 
-            Timer = new TurnTimer(GameSettings.turnTimeInMs);
+            Timer = new TurnTimer(GameSettings.TurnTimeInMs);
 
             client.SubscribeTo<NewTurnAlert>(this, NewTurn);
             client.SubscribeTo<CombatUpdateAlert>(this, CombatUpdate);

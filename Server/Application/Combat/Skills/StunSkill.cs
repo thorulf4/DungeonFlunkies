@@ -16,10 +16,10 @@ namespace Server.Application.Combat.Skills
             Duration = duration;
         }
 
-        public override void Apply(CombatEntity target, int ItemPower)
+        public override void Apply(Encounter encounter, CombatEntity target, int ItemPower)
         {
             target.AddEffect(new StunEffect(Duration));
-            base.Apply(target, ItemPower);
+            base.Apply(encounter, target, ItemPower);
         }
     }
 }

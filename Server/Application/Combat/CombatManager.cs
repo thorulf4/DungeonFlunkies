@@ -76,7 +76,7 @@ namespace Server.Application.Combat
             if (actualSkill.UsesBonusAction)
                 player.hasBonusAction = false;
 
-            actualSkill.Apply(target);
+            actualSkill.Apply(encounter, target);
 
             actualSkill.CurrentCooldown = actualSkill.Cooldown;
             skill.Cooldown = actualSkill.CurrentCooldown;
@@ -118,9 +118,12 @@ namespace Server.Application.Combat
             if (players.Any(p => p.LocationId != roomId))
                 throw new Exception("Cannot start fight with players in different rooms");
 
-            List<Enemy> enemies = new List<Enemy>();
-            for (int i = 0; i < 3; i++)
-                enemies.Add(GoblinFactory.Create());
+            List<Enemy> enemies = new List<Enemy>
+            {
+                RatFactory.Create(),
+                RatmancerFactory.Create(),
+                RatFactory.Create()
+            };
 
             var encounter = new Encounter(roomId, enemies, players.Select(p => new CombatPlayer(mediator, p)).ToList());
             encounters.Add(encounter);
@@ -130,8 +133,8 @@ namespace Server.Application.Combat
             encounter.joinInteraction = new JoinCombat(encounter);
             mediator.GetHandler<World>().GetRoom(roomId).Create(encounter.joinInteraction);
 
-            encounter.nextTurn = DateTime.Now.AddMilliseconds(GameSettings.turnTimeInMs);
-            encounter.nextTurnInvocation = dispatcher.InvokeIn(GameSettings.turnTimeInMs, () => NextTurn(encounter));
+            encounter.nextTurn = DateTime.Now.AddMilliseconds(GameSettings.TurnTimeInMs);
+            encounter.nextTurnInvocation = dispatcher.InvokeIn(GameSettings.TurnTimeInMs, () => NextTurn(encounter));
 
             //Consider making the first turn a free turn where no one can do anything
             encounter.GenerateAiActions();
@@ -144,7 +147,8 @@ namespace Server.Application.Combat
         {
             foreach(Enemy enemy in encounter.GetAliveAi())
             {
-                enemy.plannedAction?.Apply();
+                enemy.plannedAction?.Apply(encounter);
+                enemy.skills.ForEach(s => s.LowerCooldown()); // might be wrong
             }
 
             encounter.RefreshActions();
@@ -154,8 +158,8 @@ namespace Server.Application.Combat
 
             mediator.GetHandler<NewTurnAlerter>().SendToAll(encounter);
 
-            encounter.nextTurn = DateTime.Now.AddMilliseconds(GameSettings.turnTimeInMs);
-            encounter.nextTurnInvocation = dispatcher.InvokeIn(GameSettings.turnTimeInMs, () => NextTurn(encounter));
+            encounter.nextTurn = DateTime.Now.AddMilliseconds(GameSettings.TurnTimeInMs);
+            encounter.nextTurnInvocation = dispatcher.InvokeIn(GameSettings.TurnTimeInMs, () => NextTurn(encounter));
         }
 
         public void EndTurn(int playerId)

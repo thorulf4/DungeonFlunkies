@@ -185,7 +185,7 @@ namespace Server
         private void SendResponse(Response response, Stream stream)
         {
             using BinaryWriter writer = new BinaryWriter(stream, Encoding.ASCII, leaveOpen: true);
-            writer.Write(response.DataString);
+            writer.Write(response.DataString); // Close user after connecting, will cause timeouts here
         }
 
         private Response CallRequestHandler(string strType, string json)

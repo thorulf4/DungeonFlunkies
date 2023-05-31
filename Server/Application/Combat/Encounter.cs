@@ -24,6 +24,8 @@ namespace Server.Application.Combat
 
         public bool shouldUpdatePlayers = false;
 
+        int nextEntityId = 0;
+
         public Encounter(int roomId, List<Enemy> enemies, List<CombatPlayer> players)
         {
             this.roomId = roomId;
@@ -34,8 +36,10 @@ namespace Server.Application.Combat
             enemyTeam.AddRange(enemies);
             playerTeam.AddRange(players);
 
-            for (int i = 0; i < entities.Count; i++)
-                entities[i].Id = i;
+            foreach(CombatEntity entity in entities)
+            {
+                ProvideEntityId(entity);
+            }
         }
 
         internal void RefreshActions()
@@ -55,12 +59,20 @@ namespace Server.Application.Combat
             }
         }
 
-        internal void AddPlayer(CombatPlayer player)
+        public void AddPlayer(CombatPlayer player)
         {
             entities.Add(player);
             playerTeam.Add(player);
 
-            player.Id = entities.IndexOf(player);
+            //player.Id = entities.IndexOf(player);
+            ProvideEntityId(player);
+        }
+
+        public void AddEnemy(Enemy enemy)
+        {
+            entities.Add(enemy);
+            enemyTeam.Add(enemy);
+            ProvideEntityId(enemy);
         }
 
         public void GenerateAiActions()
@@ -71,10 +83,9 @@ namespace Server.Application.Combat
             }
         }
 
-        //Assumes we only have enemy ai in fights
         public List<Enemy> GetAliveAi()
         {
-            return enemyTeam.Where(e => e.alive).Select(e => (Enemy) e).ToList();
+            return enemyTeam.Where(e => e.alive).ToList();
         }
 
         public bool AllEnemiesDead()
@@ -97,6 +108,12 @@ namespace Server.Application.Combat
         public void MarkChanged()
         {
             shouldUpdatePlayers = true;
+        }
+
+        private void ProvideEntityId(CombatEntity entity)
+        {
+            entity.Id = nextEntityId;
+            nextEntityId++;
         }
     }
 }

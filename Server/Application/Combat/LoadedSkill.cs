@@ -33,18 +33,28 @@ namespace Server.Application.Combat
 
         public bool OnCooldown => CurrentCooldown > 0;
 
-        public void Apply(CombatEntity target)
+        public void Apply(Encounter encounter, CombatEntity target)
         {
             if (OnCooldown)
                 throw new Exception("Cannot use ability thats on cooldown");
 
-            skill.Apply(target, ItemPower);
+            skill.Apply(encounter, target, ItemPower);
             CurrentCooldown = Cooldown;
         }
 
         public SkillDescriptor GetDescriptor()
         {
             return skill.GetDescriptor(CurrentCooldown);
+        }
+
+        public void LowerCooldown()
+        {
+            CurrentCooldown = Math.Max(0, CurrentCooldown - 1);
+        }
+
+        public void PutOnCooldown()
+        {
+            CurrentCooldown = Cooldown;
         }
     }
 }

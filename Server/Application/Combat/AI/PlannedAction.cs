@@ -21,9 +21,9 @@ namespace Server.Application.Combat.AI
             return $"{skill.Name} -> {target.name}";
         }
 
-        public void Apply()
+        public void Apply(Encounter encounter)
         {
-            skill.Apply(target);
+            skill.Apply(encounter, target);
         }
     }
 }

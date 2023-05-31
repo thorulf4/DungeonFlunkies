@@ -6,6 +6,8 @@ namespace Shared
 {
     public static class GameSettings
     {
-        public static long turnTimeInMs = 60 * 1000;
+        public static long TurnTimeInMs => 60 * 1000;
+
+        public static int MaxEnemyCount => 7;
     }
 }
