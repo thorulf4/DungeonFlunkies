@@ -13,6 +13,7 @@ namespace Server.Application.Combat
         public string name;
         public int health;
         public int maxHealth;
+        public Modifier modifiers = new();
         public List<LoadedSkill> skills;
         public List<Effect> activeEffects = new();
 
@@ -20,6 +21,7 @@ namespace Server.Application.Combat
 
         public virtual void TakeDamage(int damage)
         {
+            damage = modifiers.ModifyDamage(damage);
             health -= damage;
 
             if (health <= 0)

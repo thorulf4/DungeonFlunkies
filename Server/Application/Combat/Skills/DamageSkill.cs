@@ -14,8 +14,6 @@ namespace Server.Application.Combat.Skills
         public DamageSkill(string name, float damageRatio) : base(name)
         {
             DamageRatio = damageRatio;
-            Cooldown = 0;
-            UsesAction = true;
         }
 
         public override void Apply(Encounter encounter, CombatEntity target, int ItemPower)

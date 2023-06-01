@@ -48,7 +48,7 @@
             
             <ContentControl Grid.Column="1" Content="{Binding Allies}"/>
 
-            <Button Grid.Column="2" MaxHeight="50px" Margin="3" Command="{Binding EndTurn}">
+            <Button Grid.Column="2" MaxHeight="50px" Margin="3" Command="{Binding EndTurn}" IsEnabled="{Binding IsTurnActive}">
                 End turn
             </Button>
         </Grid> 

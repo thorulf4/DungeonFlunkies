@@ -33,6 +33,7 @@ namespace ClientWPF.Scenes.Combat
 
         public bool HasAction { get; set; }
         public bool HasBonusAction { get; set; }
+        public bool IsTurnActive { get; private set; } = true;
 
         public ChooseVm(RequestClient client, Player player, SceneManagerVm sceneManager)
         {
@@ -84,6 +85,8 @@ namespace ClientWPF.Scenes.Combat
                 skillVm.skill.CurrentCooldown = Math.Max(0, skillVm.skill.CurrentCooldown - 1);
                 skillVm.Update(HasAction, HasBonusAction);
             }
+            IsTurnActive = false;
+            Notify("IsTurnActive");
             Notify("Skills");
         }
 
@@ -161,12 +164,15 @@ namespace ClientWPF.Scenes.Combat
             {
                 return new RelayCommand(o =>
                 {
-                    if(HasAction || HasBonusAction)
+                    if(IsTurnActive)
                     {
                         client.SendAction(new EndTurnRequest(), player);
 
                         HasAction = false;
                         HasBonusAction = false;
+                        IsTurnActive = false;
+
+                        Notify("IsTurnActive");
                     }
                 });
             }

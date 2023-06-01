@@ -168,15 +168,16 @@ namespace Server.Application.Combat
 
             player.hasAction = false;
             player.hasBonusAction = false;
+            player.hasEndedTurn = true;
 
             CheckEarlyTurnEnd(encounterIndex[playerId]);
         }
 
         private void CheckEarlyTurnEnd(Encounter encounter)
         {
-            bool anyActionsLeft = encounter.playerTeam.Any(p => p is CombatPlayer player && (player.hasAction || player.hasBonusAction));
+            bool canEndTurn = encounter.playerTeam.All(p => p is CombatPlayer player && player.hasEndedTurn);
 
-            if (!anyActionsLeft)
+            if (canEndTurn)
             {
                 encounter.nextTurnInvocation.Cancel();
                 NextTurn(encounter);

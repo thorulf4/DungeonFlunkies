@@ -17,6 +17,7 @@ namespace Server.Application.Combat
 
         public bool hasAction;
         public bool hasBonusAction;
+        public bool hasEndedTurn;
 
         public CombatPlayer(Mediator mediator, Player player)
         {
@@ -30,6 +31,7 @@ namespace Server.Application.Combat
 
             hasAction = true;
             hasBonusAction = true;
+            hasEndedTurn = false;
 
             alive = true;
         }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Server.Application;
 using Server.Application.Combat.Skills;
+using Server.Application.GameWorld;
 using Server.Interactables;
 using Server.Model;
 using Server.Model.Items;
@@ -17,6 +19,7 @@ using Shared.Requests.Character;
 using Shared.Requests.Combat;
 using Shared.Requests.Rooms;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -25,10 +28,7 @@ namespace Server
     class Program
     {
         public static int startingRoomId;
-        public static int testSwordId;
-        public static int testDaggerId;
-        public static int testShieldId;
-        public static int testShoesId;
+        public static List<int> testItems;
 
         static void Main(string[] args)
         {
@@ -49,25 +49,33 @@ namespace Server
                     Equipment dagger = new Equipment { BaseValue = 1, Name = "Dagger", Type = EquipmentType.Holdable, EquipmentTemplate = "Dagger", ItemPower = 65 };
                     Equipment shield = new Equipment { BaseValue = 1, Name = "Shield", Type = EquipmentType.Holdable, EquipmentTemplate = "Shield", ItemPower = 65 };
                     Equipment shoes = new Equipment { BaseValue = 1, Name = "Light Pants", Type = EquipmentType.Legs, EquipmentTemplate = "FastShoes", ItemPower = 65 };
+                    Equipment dancing = new Equipment { BaseValue = 1, Name = "Dancers skirt", Type = EquipmentType.Legs, EquipmentTemplate = "TauntShoes", ItemPower = 65 };
                     context.Add(sword);
                     context.Add(dagger);
                     context.Add(shield);
                     context.Add(shoes);
+                    context.Add(dancing);
                     context.SaveChanges();
 
                     startingRoomId = 0;
-                    testSwordId = sword.Id;
-                    testDaggerId = dagger.Id;
-                    testShieldId = shield.Id;
-                    testShoesId = shoes.Id;
+
+                    testItems = new()
+                    {
+                        sword.Id,
+                        dagger.Id,
+                        shield.Id,
+                        shoes.Id,
+                        dancing.Id,
+                    };
+                    
                 }
                 else
                 {
                     startingRoomId = 0;
-                    testSwordId = 1;
-                    testDaggerId = 2;
-                    testShieldId = 3;
-                    testShoesId = 4;
+                    testItems = new()
+                    {
+                        1,2,3,4,5
+                    };
                 }
             }
 

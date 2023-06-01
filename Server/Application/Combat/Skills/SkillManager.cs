@@ -22,9 +22,13 @@ namespace Server.Application.Combat.Skills
 
             AddItemTemplate("Sword", new List<Skill>()
             {
-                new DamageSkill("Swing", 1),
+                new DamageSkill("Swing", 1)
+                {
+                    UsesAction = true
+                },
                 new DamageSkill("Heavy strike", 1.25f)
                 {
+                    UsesAction = true,
                     Cooldown = 2
                 }
             });
@@ -32,7 +36,6 @@ namespace Server.Application.Combat.Skills
             {
                 new DamageSkill("Quick strike", 0.50f)
                 {
-                    UsesAction=false,
                     UsesBonusAction=true
                 }
             });
@@ -40,8 +43,13 @@ namespace Server.Application.Combat.Skills
             {
                 new StunSkill("Shield bash", 1, 0.25f)
                 {
-                    UsesAction=false,
                     UsesBonusAction=true,
+                    Cooldown = 3
+                },
+                new DefendSkill("Shield wall")
+                {
+                    UsesAction=true,
+                    DamageReduction=0.75f,
                     Cooldown = 3
                 }
             });
@@ -51,6 +59,13 @@ namespace Server.Application.Combat.Skills
                 {
                     Cooldown = 2,
                     RefreshBonusAction = true
+                }
+            });
+            AddItemTemplate("TauntShoes", new List<Skill>()
+            {
+                new TauntSkill("Taunting dance")
+                {
+                    Cooldown = 5
                 }
             });
         }

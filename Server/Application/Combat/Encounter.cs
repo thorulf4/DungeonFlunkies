@@ -50,6 +50,7 @@ namespace Server.Application.Combat
                 {
                     player.hasAction = true;
                     player.hasBonusAction = true;
+                    player.hasEndedTurn = false;
                 }
 
                 foreach(LoadedSkill skill in entity.skills)
