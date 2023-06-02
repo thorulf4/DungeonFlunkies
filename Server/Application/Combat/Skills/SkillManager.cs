@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Server.Application.Combat.Effects;
 using Server.Model.Items;
 using Shared.Descriptors;
 using System;
@@ -41,10 +42,11 @@ namespace Server.Application.Combat.Skills
             });
             AddItemTemplate("Shield", new List<Skill>()
             {
-                new StunSkill("Shield bash", 1, 0.25f)
+                new DamageSkill("Shield bash", 0.25f)
                 {
                     UsesBonusAction=true,
-                    Cooldown = 3
+                    Cooldown = 3,
+                    EffectProvider = () => new StunEffect(1)
                 },
                 new DefendSkill("Shield wall")
                 {
@@ -74,8 +76,7 @@ namespace Server.Application.Combat.Skills
         {
             foreach(Skill skill in templatedSkill)
             {
-                skill.Id = next_id;
-                next_id++;
+                skill.Id = next_id++;
                 skills.Add(skill.Id, skill);
             }
             templates.Add(name, templatedSkill);

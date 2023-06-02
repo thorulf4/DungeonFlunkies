@@ -9,7 +9,7 @@ namespace Server.Application.Combat.Enemies
 {
     public class RatFactory
     {
-        private static DamageSkill attackSkill = new DamageSkill("Nibble", 3);
+        private static DamageSkill attackSkill = new DamageSkill("Nibble", 7);
 
         public static Enemy Create()
         {

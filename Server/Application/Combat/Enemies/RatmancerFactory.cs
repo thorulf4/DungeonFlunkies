@@ -9,7 +9,7 @@ namespace Server.Application.Combat.Enemies
 {
     public class RatmancerFactory
     {
-        private static DamageSkill attackSkill = new DamageSkill("Staff strike", 7);
+        private static DamageSkill attackSkill = new DamageSkill("Staff strike", 10);
 
         private static SpawnHelperSkill spawnSkill = new SpawnHelperSkill("Call rats", RatFactory.Create)
         {
