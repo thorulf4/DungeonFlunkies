@@ -85,7 +85,7 @@ namespace ClientWPF.Scenes.Combat
                 skillVm.skill.CurrentCooldown = Math.Max(0, skillVm.skill.CurrentCooldown - 1);
                 skillVm.Update(HasAction, HasBonusAction);
             }
-            IsTurnActive = false;
+            IsTurnActive = true;
             Notify("IsTurnActive");
             Notify("Skills");
         }
