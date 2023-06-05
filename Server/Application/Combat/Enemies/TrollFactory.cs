@@ -1,6 +1,7 @@
 ﻿using Server.Application.Combat.Skills;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,9 +17,9 @@ namespace Server.Application.Combat.Enemies
         
         private static HealSkill waitSkill = new HealSkill("Rejuvenate", TargetType.Self, 10);
 
-        public static Enemy Create()
+        public static Enemy Create(Encounter encounter)
         {
-            List<LoadedSkill> skills = new List<LoadedSkill>() { new(attackSkill, 1), new LoadedSkill(waitSkill, 1) };
+            List<LoadedSkill> skills = new List<LoadedSkill>() { encounter.LoadSkill(attackSkill, 1), encounter.LoadSkill(waitSkill, 1) };
 
             return new Enemy("Troll", 200, skills);
         }

@@ -14,14 +14,15 @@ namespace Server.Application.Combat
         public Skill skill;
         public int ItemPower { get; set; }
 
-        public LoadedSkill(Skill skill, int itemPower)
+        public LoadedSkill(int id, Skill skill, int itemPower)
         {
+            Id = id;
             CurrentCooldown = 0;
             this.skill = skill;
             ItemPower = itemPower;
         }
 
-        public int Id => skill.Id;
+        public int Id { get; set; }
         public string Name => skill.Name;
         public string Description => skill.Description;
         public int Cooldown => skill.Cooldown;
@@ -44,7 +45,21 @@ namespace Server.Application.Combat
 
         public SkillDescriptor GetDescriptor()
         {
-            return skill.GetDescriptor(CurrentCooldown);
+            int cooldown = CurrentCooldown;
+            if (cooldown == -1)
+                cooldown = skill.Cooldown;
+
+            return new SkillDescriptor()
+            {
+                Id = Id,
+                Name = skill.Name,
+                Description = skill.Description,
+                Cooldown = skill.Cooldown,
+                CurrentCooldown = cooldown,
+                UsesAction = skill.UsesAction,
+                UsesBonusAction = skill.UsesBonusAction,
+                TargetType = skill.TargetType
+            };
         }
 
         public void LowerCooldown(int amount = 1)

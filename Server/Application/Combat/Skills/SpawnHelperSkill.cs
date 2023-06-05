@@ -9,10 +9,10 @@ namespace Server.Application.Combat.Skills
 {
     public class SpawnHelperSkill : Skill
     {
-        private readonly Func<Enemy> producer;
+        private readonly Func<Encounter, Enemy> producer;
         public int EnemyCount { get; set; } = 1;
 
-        public SpawnHelperSkill(string name, Func<Enemy> producer) : base(name)
+        public SpawnHelperSkill(string name, Func<Encounter, Enemy> producer) : base(name)
         {
             this.producer = producer;
         }
@@ -25,7 +25,7 @@ namespace Server.Application.Combat.Skills
             int left = Math.Min(EnemyCount, maxSpawn);
 
             while(left-->0)
-                encounter.AddEnemy(producer.Invoke());
+                encounter.AddEnemy(producer.Invoke(encounter));
         }
     }
 }

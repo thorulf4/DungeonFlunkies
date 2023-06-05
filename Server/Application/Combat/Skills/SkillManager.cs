@@ -206,11 +206,6 @@ namespace Server.Application.Combat.Skills
 
         private void AddItemTemplate(string name, List<Skill> templatedSkill)
         {
-            foreach(Skill skill in templatedSkill)
-            {
-                skill.Id = next_id++;
-                skills.Add(skill.Id, skill);
-            }
             templates.Add(name, templatedSkill);
         }
 
@@ -220,10 +215,10 @@ namespace Server.Application.Combat.Skills
             return items.SelectMany(i => templates[i]).ToList();
         }
 
-        public List<LoadedSkill> GetLoadedFromPlayer(int playerId)
+        public List<LoadedSkill> GetLoadedFromPlayer(int playerId, Encounter encounter)
         {
             List<Equipment> items = context.Equipped.Where(e => e.PlayerId == playerId).Include(e => e.Item).Select(o => (Equipment)o.Item).ToList();
-            return items.SelectMany(i => templates[i.EquipmentTemplate].Select(s => new LoadedSkill(s, i.ItemPower))).ToList();
+            return items.SelectMany(i => templates[i.EquipmentTemplate].Select(s => new LoadedSkill(next_id++, s, i.ItemPower))).ToList();
         }
 
         public Skill Get(SkillDescriptor skill)

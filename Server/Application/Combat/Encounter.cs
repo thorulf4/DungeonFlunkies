@@ -1,4 +1,5 @@
 ﻿using Server.Application.Combat.AI;
+using Server.Application.Combat.Skills;
 using Server.Interactables;
 using Server.Model;
 using Shared.Descriptors;
@@ -24,22 +25,28 @@ namespace Server.Application.Combat
 
         public bool shouldUpdatePlayers = false;
 
+        int nextSkillId = 0;
         int nextEntityId = 0;
 
-        public Encounter(int roomId, List<Enemy> enemies, List<CombatPlayer> players)
+        public Encounter(int roomId)
         {
             this.roomId = roomId;
+        }
 
-            entities.AddRange(enemies);
-            entities.AddRange(players);
-
+        public void AddEnemies(List<Enemy> enemies)
+        {
             enemyTeam.AddRange(enemies);
-            playerTeam.AddRange(players);
-
-            foreach(CombatEntity entity in entities)
-            {
+            entities.AddRange(enemies);
+            foreach (CombatEntity entity in enemies)
                 ProvideEntityId(entity);
-            }
+        }
+
+        public void AddPlayers(List<CombatPlayer> players)
+        {
+            entities.AddRange(players);
+            playerTeam.AddRange(players);
+            foreach (CombatEntity entity in players)
+                ProvideEntityId(entity);
         }
 
         internal void RefreshActions()
@@ -115,6 +122,11 @@ namespace Server.Application.Combat
         {
             entity.Id = nextEntityId;
             nextEntityId++;
+        }
+
+        public LoadedSkill LoadSkill(Skill skill, int itemPower)
+        {
+            return new LoadedSkill(nextSkillId++, skill, itemPower);
         }
     }
 }

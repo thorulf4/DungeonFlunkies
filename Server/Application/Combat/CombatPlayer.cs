@@ -12,6 +12,7 @@ namespace Server.Application.Combat
     public class CombatPlayer : CombatEntity
     {
         private readonly Mediator mediator;
+        private readonly Encounter encounter;
 
         public int playerId;
 
@@ -19,15 +20,16 @@ namespace Server.Application.Combat
         public bool hasBonusAction;
         public bool hasEndedTurn;
 
-        public CombatPlayer(Mediator mediator, Player player)
+        public CombatPlayer(Encounter encounter, Mediator mediator, Player player)
         {
             this.mediator = mediator;
+            this.encounter = encounter;
 
             playerId = player.Id;
             name = player.Name;
             maxHealth = 100;
             health = player.Health;
-            skills = mediator.GetHandler<SkillManager>().GetLoadedFromPlayer(player.Id);
+            skills = mediator.GetHandler<SkillManager>().GetLoadedFromPlayer(player.Id, encounter);
 
             hasAction = true;
             hasBonusAction = true;

@@ -49,7 +49,7 @@ namespace Server.Application.Combat
 
         public void PlayerJoinEncounter(Player player, Encounter encounter)
         {
-            encounter.AddPlayer(new CombatPlayer(mediator, player));
+            encounter.AddPlayer(new CombatPlayer(encounter, mediator, player));
             encounterIndex.Add(player.Id, encounter);
 
             mediator.GetHandler<CombatUpdateAlerter>().SendToAll(encounter);
@@ -62,7 +62,7 @@ namespace Server.Application.Combat
             var target = encounter.entities[targetId];
             var player = (CombatPlayer)encounter.entities.First(e => e is CombatPlayer player && player.playerId == playerId);
 
-            LoadedSkill actualSkill = player.skills.First(s => s.skill.Id == skill.Id);
+            LoadedSkill actualSkill = player.skills.First(s => s.Id == skill.Id);
 
             if (actualSkill.CurrentCooldown > 0)
                 throw new Exception("Trying to use ability that is on cooldown");
@@ -118,14 +118,15 @@ namespace Server.Application.Combat
             if (players.Any(p => p.LocationId != roomId))
                 throw new Exception("Cannot start fight with players in different rooms");
 
-            List<Enemy> enemies = new List<Enemy>
+            var encounter = new Encounter(roomId);
+            encounter.AddEnemies(new List<Enemy>
             {
-                RatFactory.Create(),
-                RatmancerFactory.Create(),
-                RatFactory.Create()
-            };
+                RatFactory.Create(encounter),
+                RatmancerFactory.Create(encounter),
+                RatFactory.Create(encounter)
+            });
+            encounter.AddPlayers(players.Select(p => new CombatPlayer(encounter, mediator, p)).ToList());
 
-            var encounter = new Encounter(roomId, enemies, players.Select(p => new CombatPlayer(mediator, p)).ToList());
             encounters.Add(encounter);
             foreach (var player in players)
                 encounterIndex.Add(player.Id, encounter);
