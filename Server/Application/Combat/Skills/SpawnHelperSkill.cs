@@ -19,7 +19,7 @@ namespace Server.Application.Combat.Skills
 
         public override TargetType TargetType => TargetType.Self;
 
-        public override void Apply(Encounter encounter, CombatEntity target, int ItemPower)
+        public override void Apply(Encounter encounter, CombatEntity user, CombatEntity target, int ItemPower)
         {
             int maxSpawn = GameSettings.MaxEnemyCount - encounter.GetAliveAi().Count;
             int left = Math.Min(EnemyCount, maxSpawn);

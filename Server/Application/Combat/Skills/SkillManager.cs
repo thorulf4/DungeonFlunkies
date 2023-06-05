@@ -15,7 +15,7 @@ namespace Server.Application.Combat.Skills
         private readonly GameDb context;
         private readonly Dictionary<int, Skill> skills = new();
         private int next_id = 0;
-        private readonly Dictionary<string, List<Skill>> templates = new(); // Missing weapon details
+        private readonly Dictionary<string, List<Skill>> templates = new();
 
         public SkillManager(GameDb context)
         {
@@ -33,13 +33,88 @@ namespace Server.Application.Combat.Skills
                     Cooldown = 2
                 }
             });
-            AddItemTemplate("Dagger", new List<Skill>()
+
+            MageArcheType();
+            TankArcheType();
+            RogueArcheType();
+        }
+
+        private void MageArcheType()
+        {
+            AddItemTemplate("MageRobe", new List<Skill>()
             {
-                new DamageSkill("Quick strike", 0.50f)
+                new ReduceCooldownsSkill("Focus energy")
                 {
-                    UsesBonusAction=true
+                    UsesAction = true,
+                    Cooldown = 1,
+                    Amount = 3
                 }
             });
+            AddItemTemplate("MageHat", new List<Skill>()
+            {
+                new ApplyEffectSkill("Empower", TargetType.Self)
+                {
+                    EffectProvider = () => new PassiveEffect()
+                    {
+                        TurnsLeft = 1,
+                        DamageModifier = 0.33f
+                    },
+                    Cooldown = 5,
+                    UsesBonusAction = true
+                }
+            });
+            AddItemTemplate("FireStaff", new List<Skill>()
+            {
+                new DamageSkill("Fire ball", 1.5f)
+                {
+                    UsesAction = true,
+                    Cooldown = 7,
+                },
+                new AoeDamageSkill("Fire wave", 0.75f)
+                {
+                    UsesAction = true,
+                    Cooldown = 10
+                }
+            });
+            AddItemTemplate("NatureStaff", new List<Skill>()
+            {
+                new HealSkill("Heal", TargetType.Allies, 1)
+                {
+                    UsesAction = true,
+                    Cooldown = 15
+                },
+                new DamageSkill("Poison Bramble", 0.25f)
+                {
+                    UsesAction = true,
+                    Cooldown = 8,
+                    EffectProvider = () => new BleedEffect()
+                    {
+                        TurnsLeft = 2,
+                        DamagePerTurn = 20
+                    }
+                }
+            });
+            AddItemTemplate("ArcaneWand", new List<Skill>()
+            {
+                new DamageSkill("Magic Missle", 0.6f)
+                {
+                    UsesBonusAction = true,
+                    Cooldown = 1
+                }
+            });
+            AddItemTemplate("MageSandals", new List<Skill>()
+            {
+                new RefreshActionSkill("Enlightened Action")
+                {
+                    UsesBonusAction = true,
+                    RefreshAction = true,
+                    Cooldown = 10
+                }
+            });
+        }
+
+        private void TankArcheType()
+        {
             AddItemTemplate("Shield", new List<Skill>()
             {
                 new DamageSkill("Shield bash", 0.25f)
@@ -55,6 +130,53 @@ namespace Server.Application.Combat.Skills
                     Cooldown = 3
                 }
             });
+            AddItemTemplate("TauntShoes", new List<Skill>()
+            {
+                new TauntSkill("Taunting dance")
+                {
+                    Cooldown = 5
+                }
+            });
+            AddItemTemplate("MetalArmor", new List<Skill>()
+            {
+                new DefendSkill("Stand tall") // Refactor this into a passive effect
+                {
+                    DamageReduction = 0.25f,
+                    Cooldown = 1
+                }
+            });
+            AddItemTemplate("MetalHelmet", new List<Skill>()
+            {
+                new HealSkill("Rejuvanate", TargetType.Self, 0.25f)
+                {
+                    UsesBonusAction = true,
+                    Cooldown = 3
+                }
+            });
+        }
+
+        private void RogueArcheType()
+        {
+            AddItemTemplate("FastCap", new List<Skill>()
+            {
+                new ReduceCooldownsSkill("Refresh")
+                {
+                    Cooldown = 3,
+                    Amount = 1
+                }
+            });
+            AddItemTemplate("LeatherArmor", new List<Skill>()
+            {
+                new ApplyEffectSkill("Blade Dancer", TargetType.Self)
+                {
+                    EffectProvider = () => new PassiveEffect()
+                    {
+                        TurnsLeft = 1,
+                        FlatDamageIncrease = 15
+                    },
+                    Cooldown = 3
+                }
+            });
             AddItemTemplate("FastShoes", new List<Skill>()
             {
                 new RefreshActionSkill("Hasten")
@@ -62,12 +184,22 @@ namespace Server.Application.Combat.Skills
                     Cooldown = 2,
                     RefreshBonusAction = true
                 }
-            });
-            AddItemTemplate("TauntShoes", new List<Skill>()
+            }); 
+            AddItemTemplate("Dagger", new List<Skill>()
             {
-                new TauntSkill("Taunting dance")
+                new DamageSkill("Lashing strike", 0.25f)
                 {
-                    Cooldown = 5
+                    UsesAction = true,
+                    EffectProvider = () => new BleedEffect()
+                    {
+                        DamagePerTurn = 30,
+                        TurnsLeft = 2
+                    },
+                    Cooldown = 3
+                },
+                new DamageSkill("Quick strike", 0.50f)
+                {
+                    UsesBonusAction=true
                 }
             });
         }

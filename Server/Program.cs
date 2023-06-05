@@ -28,7 +28,15 @@ namespace Server
     class Program
     {
         public static int startingRoomId;
-        public static List<int> testItems;
+        public static List<int> testItems = new();
+
+        private static void AddTestItem(GameDb context, string name, EquipmentType type, string template)
+        {
+            Equipment item = new Equipment(name, type, template);
+            context.Add(item);
+            context.SaveChanges();
+            testItems.Add(item.Id);
+        }
 
         static void Main(string[] args)
         {
@@ -45,37 +53,35 @@ namespace Server
                 //Seed the database
                 if (context.Items.Count() == 0)
                 {
-                    Equipment sword = new Equipment { BaseValue = 1, Name = "Sword", Type = EquipmentType.Holdable, EquipmentTemplate="Sword", ItemPower=65 };
-                    Equipment dagger = new Equipment { BaseValue = 1, Name = "Dagger", Type = EquipmentType.Holdable, EquipmentTemplate = "Dagger", ItemPower = 65 };
-                    Equipment shield = new Equipment { BaseValue = 1, Name = "Shield", Type = EquipmentType.Holdable, EquipmentTemplate = "Shield", ItemPower = 65 };
-                    Equipment shoes = new Equipment { BaseValue = 1, Name = "Light Pants", Type = EquipmentType.Legs, EquipmentTemplate = "FastShoes", ItemPower = 65 };
-                    Equipment dancing = new Equipment { BaseValue = 1, Name = "Dancers skirt", Type = EquipmentType.Legs, EquipmentTemplate = "TauntShoes", ItemPower = 65 };
-                    context.Add(sword);
-                    context.Add(dagger);
-                    context.Add(shield);
-                    context.Add(shoes);
-                    context.Add(dancing);
+                    AddTestItem(context, "Dagger", EquipmentType.Holdable, "Dagger");
+                    AddTestItem(context, "Light Pants", EquipmentType.Legs, "FastShoes");
+                    AddTestItem(context, "Hood", EquipmentType.Head, "FastCap");
+                    AddTestItem(context, "Leather armor", EquipmentType.Torso, "LeatherArmor");
+
+                    AddTestItem(context, "Sword", EquipmentType.Holdable, "Sword");
+                    AddTestItem(context, "Metal armor", EquipmentType.Torso, "MetalArmor");
+                    AddTestItem(context, "Dancers skirt", EquipmentType.Legs, "TauntShoes");
+                    AddTestItem(context, "Shield", EquipmentType.Holdable, "Shield");
+                    AddTestItem(context, "Metal Helmet", EquipmentType.Head, "MetalHelmet");
+
+                    AddTestItem(context, "Mage Robe", EquipmentType.Torso, "MageRobe");
+                    AddTestItem(context, "Mage Hat", EquipmentType.Head, "MageHat");
+                    AddTestItem(context, "Fire Staff", EquipmentType.Holdable, "FireStaff");
+                    AddTestItem(context, "Nature Staff", EquipmentType.Holdable, "NatureStaff");
+                    AddTestItem(context, "Arcane Wand", EquipmentType.Holdable, "ArcaneWand");
+                    AddTestItem(context, "Mage Sandals", EquipmentType.Legs, "MageSandals");
+
                     context.SaveChanges();
 
-                    startingRoomId = 0;
-
-                    testItems = new()
-                    {
-                        sword.Id,
-                        dagger.Id,
-                        shield.Id,
-                        shoes.Id,
-                        dancing.Id,
-                    };
-                    
+                    startingRoomId = 0;                    
                 }
                 else
                 {
                     startingRoomId = 0;
-                    testItems = new()
-                    {
-                        1,2,3,4,5
-                    };
+                    testItems = context.Items.Select(i => i.Id).ToList();
+                    Console.WriteLine($"Items {testItems.Count}");
+                    foreach (int item in testItems)
+                        Console.WriteLine(item);
                 }
             }
 

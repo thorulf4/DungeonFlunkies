@@ -3,6 +3,7 @@ using Server.Application.Combat.Effects;
 using Shared.Descriptors;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Server.Application.Combat
@@ -21,7 +22,7 @@ namespace Server.Application.Combat
 
         public virtual void TakeDamage(int damage)
         {
-            damage = modifiers.ModifyDamage(damage);
+            damage = modifiers.ModifyIncomingDamage(damage);
             health -= damage;
 
             if (health <= 0)
@@ -89,6 +90,11 @@ namespace Server.Application.Combat
                     effect.OnEffectEnd(this);
                 }
             }
+        }
+
+        public IEnumerable<T> GetEffects<T>() where T : Effect
+        {
+            return activeEffects.Where(e => e is T).Select(e => e as T);
         }
     }
 }

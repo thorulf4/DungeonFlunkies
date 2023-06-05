@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Server.Application.Combat.Skills
 {
-    public class TauntSkill : Skill
+    public class AoeDamageSkill : DamageSkill
     {
-        public TauntSkill(string name) : base(name)
+        public AoeDamageSkill(string name, float damageRatio) : base(name, damageRatio)
         {
         }
 
@@ -16,12 +16,9 @@ namespace Server.Application.Combat.Skills
 
         public override void Apply(Encounter encounter, CombatEntity user, CombatEntity target, int ItemPower)
         {
-            foreach(Enemy enemy in encounter.GetAliveAi())
+            foreach(CombatEntity entity in encounter.GetAliveAi())
             {
-                if(enemy.plannedAction?.skill.skill.TargetType == TargetType.Enemies)
-                {
-                    enemy.plannedAction.target = target;
-                }
+                base.Apply(encounter, user, entity, ItemPower);
             }
         }
     }

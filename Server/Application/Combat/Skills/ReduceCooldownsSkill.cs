@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Server.Application.Combat.Skills
 {
-    public class TauntSkill : Skill
+    public class ReduceCooldownsSkill : Skill
     {
-        public TauntSkill(string name) : base(name)
+        public int Amount { get; set; }
+
+        public ReduceCooldownsSkill(string name) : base(name)
         {
         }
 
@@ -16,12 +18,9 @@ namespace Server.Application.Combat.Skills
 
         public override void Apply(Encounter encounter, CombatEntity user, CombatEntity target, int ItemPower)
         {
-            foreach(Enemy enemy in encounter.GetAliveAi())
+            foreach(LoadedSkill skill in target.skills)
             {
-                if(enemy.plannedAction?.skill.skill.TargetType == TargetType.Enemies)
-                {
-                    enemy.plannedAction.target = target;
-                }
+                skill.LowerCooldown(Amount);
             }
         }
     }

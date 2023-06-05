@@ -15,7 +15,7 @@ namespace Server.Application.Combat.Skills
 
         public RefreshActionSkill(string name) : base(name) { }
 
-        public override void Apply(Encounter encounter, CombatEntity target, int ItemPower)
+        public override void Apply(Encounter encounter, CombatEntity user, CombatEntity target, int ItemPower)
         {
             if(target is CombatPlayer player)
             {

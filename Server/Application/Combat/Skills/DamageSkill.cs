@@ -18,9 +18,18 @@ namespace Server.Application.Combat.Skills
             DamageRatio = damageRatio;
         }
 
-        public override void Apply(Encounter encounter, CombatEntity target, int ItemPower)
+        public override void Apply(Encounter encounter, CombatEntity user, CombatEntity target, int ItemPower)
         {
-            target.TakeDamage((int)(ItemPower * DamageRatio));
+            int damage = (int)(ItemPower * DamageRatio);
+
+            damage = user.modifiers.ModifyOutgoingDamage(damage);
+
+            target.TakeDamage(damage);
+
+
+            //foreach (OnHitEffect effect in target.GetEffects<OnHitEffect>())
+            //    effect.OnHitTriggered(target);
+
             if (EffectProvider != null)
                 target.AddEffect(EffectProvider.Invoke());
         }

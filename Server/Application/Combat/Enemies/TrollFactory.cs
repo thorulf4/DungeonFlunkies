@@ -14,11 +14,11 @@ namespace Server.Application.Combat.Enemies
             Cooldown = 5
         };
         
-        private static SelfHealSkill waitSkill = new SelfHealSkill("Rejuvenate", 10);
+        private static HealSkill waitSkill = new HealSkill("Rejuvenate", TargetType.Self, 10);
 
         public static Enemy Create()
         {
-            List<LoadedSkill> skills = new List<LoadedSkill>() { new(attackSkill, 1) };
+            List<LoadedSkill> skills = new List<LoadedSkill>() { new(attackSkill, 1), new LoadedSkill(waitSkill, 1) };
 
             return new Enemy("Troll", 200, skills);
         }

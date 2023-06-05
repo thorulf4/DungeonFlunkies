@@ -18,7 +18,7 @@ namespace Server.Application.Combat.Skills
 
         public override TargetType TargetType => TargetType.Allies;
 
-        public override void Apply(Encounter encounter, CombatEntity target, int ItemPower)
+        public override void Apply(Encounter encounter, CombatEntity user, CombatEntity target, int ItemPower)
         {
             target.AddEffect(new DefenseEffect(Turns, DamageReduction));
         }

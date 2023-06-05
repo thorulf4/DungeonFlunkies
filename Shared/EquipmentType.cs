@@ -9,10 +9,6 @@ namespace Shared
         Head,
         Torso,
         Legs,
-        Boot,
-        Ring,
-        Neck,
-        Sock,
         Holdable
     }
 }

@@ -76,7 +76,7 @@ namespace Server.Application.Combat
             if (actualSkill.UsesBonusAction)
                 player.hasBonusAction = false;
 
-            actualSkill.Apply(encounter, target);
+            actualSkill.Apply(encounter, player, target);
 
             actualSkill.CurrentCooldown = actualSkill.Cooldown;
             skill.Cooldown = actualSkill.CurrentCooldown;
@@ -147,7 +147,7 @@ namespace Server.Application.Combat
         {
             foreach(Enemy enemy in encounter.GetAliveAi())
             {
-                enemy.plannedAction?.Apply(encounter);
+                enemy.plannedAction?.Apply(encounter, enemy);
                 enemy.skills.ForEach(s => s.LowerCooldown()); // might be wrong
             }
 
